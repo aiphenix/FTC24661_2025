@@ -36,7 +36,7 @@ public class auto_red_3sp extends OpMode {
     double power_adj;
 
 
-    // PedroPath points
+    // PedroPath points - not touching walls
     private final Pose start = new Pose(144 - 27.511, 128.237, Math.toRadians(180 - 135)); // Start pose of our robot
     private final Pose score = new Pose(144 - 47.801, 96.002, Math.toRadians(180 - 135)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle
     private final Pose intake1CP = new Pose(144 - 62.934, 73.673); // Control Point
