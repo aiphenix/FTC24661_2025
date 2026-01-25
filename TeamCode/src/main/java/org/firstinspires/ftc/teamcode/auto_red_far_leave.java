@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 @Autonomous
 public class auto_red_far_leave extends LinearOpMode {
-    ftc_2025_functions ftc_fns = new ftc_2025_functions(hardwareMap);
+    ftc_2025_functions ftc_fns = new ftc_2025_functions();
 
     @Override
     public void runOpMode() {
