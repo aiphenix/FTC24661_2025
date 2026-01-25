@@ -7,12 +7,11 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
-
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous
@@ -246,8 +245,8 @@ public class auto_blue_3sp extends OpMode {
         ShootLeft = hardwareMap.get(DcMotorEx.class, "ShootLeft");
         ShootRight = hardwareMap.get(DcMotorEx.class, "ShootRight");
 
-        ShootLeft.setVelocityPIDFCoefficients(35, 0, 0, 15.9);
-        ShootRight.setVelocityPIDFCoefficients(35, 0, 0, 15.9);
+        ShootLeft.setVelocityPIDFCoefficients(125, 0, 0, 16.8);
+        ShootRight.setVelocityPIDFCoefficients(125, 0, 0, 16.8);
 
         VoltageSensor ControlHub_VoltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 

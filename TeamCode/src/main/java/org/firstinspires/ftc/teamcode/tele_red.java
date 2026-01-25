@@ -62,8 +62,8 @@ public class tele_red extends LinearOpMode {
 
         ShootRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         ShootLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        ShootLeft.setVelocityPIDFCoefficients(35, 0, 0, 15.9);
-        ShootRight.setVelocityPIDFCoefficients(35, 0, 0, 15.9);
+        ShootLeft.setVelocityPIDFCoefficients(125, 0, 0, 16.8);
+        ShootRight.setVelocityPIDFCoefficients(125, 0, 0, 16.8);
 
         lime = new Limelight( hardwareMap, 6) ;
 

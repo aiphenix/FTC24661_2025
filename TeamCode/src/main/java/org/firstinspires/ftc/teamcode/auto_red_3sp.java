@@ -36,7 +36,7 @@ public class auto_red_3sp extends OpMode {
     double power_adj;
 
 
-    // PedroPath points - not touching walls
+    // PedroPath points - do not collide with wall
     private final Pose start = new Pose(144 - 27.511, 128.237, Math.toRadians(180 - 135)); // Start pose of our robot
     private final Pose score = new Pose(144 - 47.801, 96.002, Math.toRadians(180 - 135)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle
     private final Pose intake1CP = new Pose(144 - 62.934, 73.673); // Control Point
@@ -44,11 +44,7 @@ public class auto_red_3sp extends OpMode {
     private final Pose intake2CP = new Pose(144 - 81.156, 43.807); // Control Point
     private final Pose intake2End = new Pose(144 - 14.5, 56.319, Math.toRadians(180 - 182)); // Middle (Second Set) of Artifacts from the Spike Mark
     private final Pose intake3CP = new Pose(144 - 80.739, 19.423); // Control Point
-    private final Pose intake3End = new Pose(144 - 13.8, 30.037, Math
-
-
-
-            .toRadians(180 - 182)); // Lowest (Third Set) of Artifacts from the Spike Mark
+    private final Pose intake3End = new Pose(144 - 13.8, 30.037, Math.toRadians(180 - 182)); // Lowest (Third Set) of Artifacts from the Spike Mark
     private final Pose park = new Pose(144 - 30.153, 82.491, Math.toRadians(180 - 180)); // Park in front of gate at end of auto
     private PathChain startToScore, scoreToIntake1, intake1ToScore, scoreToIntake2,
             intake2ToScore, scoreToIntake3, intake3ToScore, scoreToPark;
