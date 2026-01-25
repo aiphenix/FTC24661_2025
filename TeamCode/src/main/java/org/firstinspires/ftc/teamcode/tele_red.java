@@ -60,11 +60,6 @@ public class tele_red extends LinearOpMode {
 
         VoltageSensor ControlHub_VoltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
-        ShootRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        ShootLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        ShootLeft.setVelocityPIDFCoefficients(125, 0, 0, 16.8);
-        ShootRight.setVelocityPIDFCoefficients(125, 0, 0, 16.8);
-
         lime = new Limelight( hardwareMap, 6) ;
 
         List<DcMotor> allMotors = Arrays.asList(
@@ -76,7 +71,7 @@ public class tele_red extends LinearOpMode {
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         });
 
-        ftc_fns.set_motor_orientations_and_zero_power_behavior(
+        ftc_fns.set_motor_orientations_PIDF_and_zero_power_behavior(
                 FrontLeft, FrontRight, BackLeft, BackRight,
                 ShootLeft, ShootRight, Intake, Gate, HoodLeft, HoodRight
         );

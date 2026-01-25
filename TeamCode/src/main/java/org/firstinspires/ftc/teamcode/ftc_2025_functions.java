@@ -127,7 +127,7 @@ public class ftc_2025_functions extends LinearOpMode {
         return power_adj;
     }
 
-    public void set_motor_orientations_and_zero_power_behavior(
+    public void set_motor_orientations_PIDF_and_zero_power_behavior(
             DcMotor FrontLeft, DcMotor FrontRight, DcMotor BackLeft, DcMotor BackRight,
             DcMotorEx ShootLeft, DcMotorEx ShootRight, DcMotor Intake, DcMotor Gate,
             Servo HoodLeft, Servo HoodRight
@@ -154,6 +154,12 @@ public class ftc_2025_functions extends LinearOpMode {
         ShootLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         ShootRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         Intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // Set shooter PIDF coefs
+        ShootRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        ShootLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        ShootLeft.setVelocityPIDFCoefficients(125, 0, 0, 16.8);
+        ShootRight.setVelocityPIDFCoefficients(125, 0, 0, 16.8);
     }
 
     // gate function

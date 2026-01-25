@@ -31,7 +31,7 @@ public class auto_blue_far_leave extends LinearOpMode {
 
         VoltageSensor ControlHub_VoltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
-        ftc_fns.set_motor_orientations_and_zero_power_behavior(
+        ftc_fns.set_motor_orientations_PIDF_and_zero_power_behavior(
                 FrontLeft, FrontRight, BackLeft, BackRight,
                 ShootLeft, ShootRight, Intake, Gate, HoodLeft, HoodRight
         );

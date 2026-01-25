@@ -245,12 +245,9 @@ public class auto_blue_3sp extends OpMode {
         ShootLeft = hardwareMap.get(DcMotorEx.class, "ShootLeft");
         ShootRight = hardwareMap.get(DcMotorEx.class, "ShootRight");
 
-        ShootLeft.setVelocityPIDFCoefficients(125, 0, 0, 16.8);
-        ShootRight.setVelocityPIDFCoefficients(125, 0, 0, 16.8);
-
         VoltageSensor ControlHub_VoltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
-        ftc_fns.set_motor_orientations_and_zero_power_behavior(
+        ftc_fns.set_motor_orientations_PIDF_and_zero_power_behavior(
                 FrontLeft, FrontRight, BackLeft, BackRight,
                 ShootLeft, ShootRight, Intake, Gate, HoodLeft, HoodRight
         );
