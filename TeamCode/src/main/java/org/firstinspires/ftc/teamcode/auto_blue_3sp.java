@@ -271,9 +271,9 @@ public class auto_blue_3sp extends OpMode {
         ftc_fns.set_shooter_speed(
                 ftc_fns.near_shot_shooter_rpm, false, ShootLeft,
                 ShootRight, telemetry, gamepad1);
-        HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos+0.03);
-        HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos+0.03);
-        Gate.setPower(ftc_fns.init_gate_lift_pwr * power_adj);
+        HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos_for_auto);
+        HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos_for_auto);
+        Gate.setPower(ftc_fns.init_gate_lift_pwr * power_adj); // zero gate happens at end of path startToScore
     }
 
     @Override

@@ -71,7 +71,7 @@ public class tele_blue extends LinearOpMode {
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         });
 
-        ftc_fns.set_motor_orientations_PIDF_PIDF_and_zero_power_behavior(
+        ftc_fns.set_motor_orientations_PIDF_and_zero_power_behavior(
                 FrontLeft, FrontRight, BackLeft, BackRight,
                 ShootLeft, ShootRight, Intake, Gate, HoodLeft, HoodRight
         );
@@ -201,27 +201,7 @@ public class tele_blue extends LinearOpMode {
                 Intake.setPower(0);
                 int near_shot = ftc_fns.is_near_2(lime, telemetry);
 
-                // If bot is backing the tag, auto-rotate
-//                if (near_shot == -1) {
-//                    while (near_shot < 0) {
-//                        double curr_heading = follower.getHeading();
-//                        if (curr_heading > -40 && curr_heading < 135) {
-//                            ftc_fns.rotate_counter_clockwise(FrontLeft, FrontRight, BackLeft, BackRight, x_power);
-//                            sleep(20);
-//                        } else if (curr_heading < -60 && curr_heading > 135) {
-//                            ftc_fns.rotate_clockwise(FrontLeft, FrontRight, BackLeft, BackRight, x_power);
-//                            sleep(20);
-//                        }
-//                        if (gamepad1.xWasPressed()) {
-//                            break;
-//                        }
-////                        ftc_fns.stop_drive(FrontLeft, FrontRight, BackLeft, BackRight, 0);
-//                        near_shot = ftc_fns.is_near_2(lime, telemetry);
-//                    }
-//                }
-
                 if (Gate.getCurrentPosition() < ftc_fns.gate_down_position - 100) {
-//                    telemetry.addLine("Gate is NOT closed. CANNOT shoot!");
                     ftc_fns.close_gate(Gate);
                 } else if (near_shot == 1) {
                     HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos);
@@ -231,15 +211,6 @@ public class tele_blue extends LinearOpMode {
                             true, true, FrontLeft, FrontRight, BackLeft, BackRight,
                             lime, telemetry, gamepad1);
                     boolean aimed = result_pair.isSuccess();
-
-                    // Do not check aim success
-//                    double dist = lime.getDistance();
-//                    telemetry.addData("distance", dist);
-//                    telemetry.update();
-//                    ftc_fns.set_shooter_speed(
-//                            ftc_fns.near_shot_shooter_rpm * (long) Math.sqrt(dist),
-//                            true, ShootLeft, ShootRight, telemetry, gamepad1);
-//                    ftc_fns.make_near_shot(power_adj, true, Intake, Gate);
 
                     if (aimed) {
                         double dist = lime.getDistance();
@@ -261,14 +232,6 @@ public class tele_blue extends LinearOpMode {
                             lime, telemetry, gamepad1);
                     boolean aimed = result_pair.isSuccess();
 
-                    // Do not check aim success
-//                    double dist = lime.getDistance();
-//                    telemetry.addData("distance", dist);
-//                    telemetry.update();
-//                    ftc_fns.set_shooter_speed(
-//                            ftc_fns.far_shot_shooter_rpm * (long) Math.sqrt(dist),
-//                            true, ShootLeft, ShootRight, telemetry, gamepad1);
-//                    ftc_fns.make_far_shot(power_adj, true, Intake, Gate);
                     if (aimed) {
                         double dist = lime.getDistance();
                         telemetry.addData("distance", dist);

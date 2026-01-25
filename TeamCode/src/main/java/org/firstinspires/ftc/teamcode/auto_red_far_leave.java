@@ -39,7 +39,7 @@ public class auto_red_far_leave extends LinearOpMode {
         // Set up limelight
         // Motors and Accessories
         Limelight3A limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(7);
+        limelight.pipelineSwitch(6);
         limelight.start();
         telemetry.setMsTransmissionInterval(10);
 
@@ -50,74 +50,14 @@ public class auto_red_far_leave extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            // Run shooter wheel during entire auto session
-//            ftc_fns.set_shooter_speed(
-//                    ftc_fns.near_shot_shooter_rpm, false, ShootLeft, ShootRight);
-//            HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos);
-//            HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos);
-
-            // Backoff bot from initial pos
-//            ftc_fns.move_back(FrontLeft, FrontRight, BackLeft, BackRight,
-//                    ftc_fns.auton_init_move_back_pwr * power_adj);
             Gate.setPower(ftc_fns.init_gate_lift_pwr * power_adj); // Initial gate lift with low power
-//            sleep(ftc_fns.auton_init_move_back_time);
-//            ftc_fns.stop_drive(FrontLeft, FrontRight, BackLeft, BackRight,0);
-//            ftc_2025_functions.AimResultPair result_pair = ftc_fns.auto_aim(
-//                    false, FrontLeft, FrontRight, BackLeft, BackRight,
-//                    limelight, telemetry, gamepad1);
-//            boolean aimed = result_pair.isSuccess();
-//            long aim_time_elapsed = result_pair.getTimeElapsed();
-//            telemetry.addData("Auto Aim Took", aim_time_elapsed);
-//            long additional_sleep_needed = (ftc_fns.total_init_gate_lift_time
-//                    - ftc_fns.auton_init_move_back_time - aim_time_elapsed);
-//            if (additional_sleep_needed > 0) {
-//                sleep(additional_sleep_needed);
-//            }
-            sleep(3500);
+            sleep(2000);
             ftc_fns.zero_gate(Gate);
-
-//            // Preloaded shot0
-//            ftc_fns.make_near_shot(power_adj, true, Intake, Gate);
-//
-//            // shot1
-//            ftc_fns.auto_red_go_pick_up_balls_from_near_shot_spot(
-//                    ftc_fns.rot_time1_red, ftc_fns.strafe_time1_red, ftc_fns.intake_time1_red,
-//                    ftc_fns.strafe_back_time1_red, ftc_fns.rot_back_time1_red, power_adj,
-//                    FrontLeft, FrontRight, BackLeft, BackRight, Intake, Gate);
-//            ftc_fns.auto_aim(
-//                    false, FrontLeft, FrontRight, BackLeft, BackRight,
-//                    limelight, telemetry, gamepad1);
-//            ftc_fns.lift_gate(true, Gate, Intake);
-//            ftc_fns.make_near_shot(power_adj, true, Intake, Gate);
-//
-//            // shot2
-//            ftc_fns.auto_red_go_pick_up_balls_from_near_shot_spot(
-//                    ftc_fns.rot_time2_red, ftc_fns.strafe_time2_red, ftc_fns.intake_time2_red,
-//                    ftc_fns.strafe_back_time2_red, ftc_fns.rot_back_time2_red, power_adj,
-//                    FrontLeft, FrontRight, BackLeft, BackRight, Intake, Gate);
-//            ftc_fns.auto_aim(
-//                    false, FrontLeft, FrontRight, BackLeft, BackRight,
-//                    limelight, telemetry, gamepad1);
-//            ftc_fns.lift_gate(true, Gate, Intake);
-//            ftc_fns.make_near_shot(power_adj, true, Intake, Gate);
-
-//            // shot3
-//            ftc_fns.auto_red_go_pick_up_balls_from_near_shot_spot(
-//                    ftc_fns.rot_time3_red, ftc_fns.strafe_time3_red, ftc_fns.intake_time3_red,
-//                    ftc_fns.strafe_back_time3_red, ftc_fns.rot_back_time3_red, power_adj,
-//                    FrontLeft, FrontRight, BackLeft, BackRight, Intake, Gate);
-//            ftc_fns.auto_aim(
-//                    false, FrontLeft, FrontRight, BackLeft, BackRight,
-//                    limelight, telemetry, gamepad1);
-//            ftc_fns.lift_gate(true, Gate, Intake);
-//            ftc_fns.make_near_shot(power_adj, false, Intake, Gate);
 
             // leave shooting area
             ftc_fns.strafe_right(FrontLeft, FrontRight, BackLeft, BackRight, ftc_fns.wheel_pwr * power_adj);
             sleep(ftc_fns.auton_time_to_leave_near_shot_area);
             ftc_fns.stop_drive(FrontLeft, FrontRight, BackLeft, BackRight,0);
-
-//            ftc_fns.power_down_shooter(ShootLeft, ShootRight);
         }
     }
 }
