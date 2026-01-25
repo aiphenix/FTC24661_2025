@@ -71,19 +71,19 @@ public class auto_blue_proto extends OpMode {
                 waitThenFollowPath(1, startToScore,  1, 3);
                 break;
             case 1:
-                shootThenFollowPath(1, scoreToIntake1, 0.85, 2);
+                shootThenFollowPath(1, scoreToIntake1, 1, 2);
                 break;
             case 2:
                 waitThenFollowPath(0.5, intake1ToScore, 1, 5);
                 break;
             case 3:
-                shootThenFollowPath(0, scoreToIntake2, 0.85, 8);
+                shootThenFollowPath(0, scoreToIntake2, 1, 8);
                 break;
             case 4:
                 waitThenFollowPath(0.5, intake2ToScore, 1, 1);
                 break;
             case 5:
-                shootThenFollowPath(0, scoreToIntake3, 0.85, 6);
+                shootThenFollowPath(0, scoreToIntake3, 1, 6);
                 break;
             case 6:
                 waitThenFollowPath(0.5, intake3ToScore, 1, 7);
