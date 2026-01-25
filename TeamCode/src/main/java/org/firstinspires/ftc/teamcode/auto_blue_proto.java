@@ -22,7 +22,7 @@ public class auto_blue_proto extends OpMode {
     private Timer pathTimer, actionTimer;
     private boolean wasActionTimerReset = false;
     private int pathState;
-    ftc_2025_functions ftc_fns = new ftc_2025_functions(hardwareMap);
+    ftc_2025_functions ftc_fns = new ftc_2025_functions();
 
     DcMotorEx ShootLeft;
     DcMotorEx ShootRight;
