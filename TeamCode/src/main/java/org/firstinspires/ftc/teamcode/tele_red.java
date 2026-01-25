@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -23,7 +22,7 @@ import java.util.function.Supplier;
 
 @TeleOp
 public class tele_red extends LinearOpMode {
-    ftc_2025_functions ftc_fns = new ftc_2025_functions(hardwareMap);
+    ftc_2025_functions ftc_fns = new ftc_2025_functions();
 
     // Private variables
     double intake_trigger = 0;
@@ -208,13 +207,14 @@ public class tele_red extends LinearOpMode {
                     boolean aimed = result_pair.isSuccess();
 
                     if (aimed) {
+                        ftc_fns.lift_gate(false, Gate, Intake);
                         double dist = lime.getDistance();
                         telemetry.addData("distance", dist);
                         telemetry.update();
                         ftc_fns.set_shooter_speed(
                                 ftc_fns.near_shot_shooter_rpm * Math.sqrt(dist),
                                 true, ShootLeft, ShootRight, telemetry, gamepad1);
-                        ftc_fns.make_near_shot(power_adj, true, Intake, Gate);
+                        ftc_fns.make_near_shot(power_adj, false, true, Intake, Gate);
                     } else {
                         gamepad1.rumble(100);
                     }
@@ -234,17 +234,18 @@ public class tele_red extends LinearOpMode {
                     telemetry.addLine("In far shot 4");
                     telemetry.update();
                     if (aimed) {
+                        ftc_fns.lift_gate(false, Gate, Intake);
                         double dist = lime.getDistance();
                         telemetry.addData("distance", dist);
                         telemetry.update();
                         ftc_fns.set_shooter_speed(
                                 ftc_fns.far_shot_shooter_rpm * Math.sqrt(dist/2.9),
                                 true, ShootLeft, ShootRight, telemetry, gamepad1);
-                        ftc_fns.make_far_shot(power_adj, true, Intake, Gate);
+                        ftc_fns.make_far_shot(power_adj, false, true, Intake, Gate);
                     } else {
                         telemetry.addLine("Aiming Failed!");
                         telemetry.update();
-                        gamepad1.rumble(500);
+//                        gamepad1.rumble(500);
                     }
                 }
             }

@@ -1,11 +1,7 @@
 // This entire codes if at 13.7V batter
 package org.firstinspires.ftc.teamcode;
 
-import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -13,20 +9,12 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
-import com.pedropathing.util.Timer;
-import java.time.Duration;
-import java.time.Instant;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.teamcode.Limelight;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ftc_2025_functions extends LinearOpMode {
-    private VoltageSensor ControlHub_VoltageSensor;
-
     // --------------- Constants --------------
 
     // Initialization
@@ -34,8 +22,8 @@ public class ftc_2025_functions extends LinearOpMode {
     public int gate_down_position  = 490;
 
     // Shooting
-    public double near_shot_hood_servo_pos = 0.6;
-    public double near_shot_hood_servo_pos_for_auto = near_shot_hood_servo_pos + 0.03;
+    public double near_shot_hood_servo_pos = 0.63;
+    public double near_shot_hood_servo_pos_for_auto = near_shot_hood_servo_pos;
     public double far_shot_hood_servo_pos = 0.68;
     public double near_shot_shooter_rpm = 2450;
     public double far_shot_shooter_rpm = 3600;
@@ -43,16 +31,10 @@ public class ftc_2025_functions extends LinearOpMode {
 
     // Movement
     public double wheel_pwr = 1;
-    public double ball_intake_move_power_adj = 0.7;
     public double ball_pickup_intake_pwr = 0.65; // TODO: Can we tune down to 0.5?
     public long auton_time_to_leave_near_shot_area = 650;
 
     // --------------- Functions --------------
-
-    public ftc_2025_functions(HardwareMap hardwareMap) {
-
-    }
-
     // Systems functions
     public double adjust_power(double curr_vol, Telemetry telemetry) {
         // double power_adj = 1.04; // > 13v : 1.08 | 12.5-13v : 1.04 | 12.25-12.5v : 1.02 | 12-12.25 : 1.0 | 11.8: 0.98 (<12v CHANGE BATTERY)
@@ -113,10 +95,10 @@ public class ftc_2025_functions extends LinearOpMode {
     public void lift_gate(boolean wait_till_completion, DcMotor Gate, DcMotor Intake) {
         // stop intake in case it is still forward spinning.
         Intake.setPower(0);
-        sleep(50);
+        sleep(25);
         // unroll the intake to release pressure on gate
         Intake.setPower(-0.2);
-        sleep(80);
+        sleep(75);
         Intake.setPower(0);
 
         // Lift gate
@@ -132,7 +114,7 @@ public class ftc_2025_functions extends LinearOpMode {
         Gate.setTargetPosition(gate_down_position); // TODO: changed from 1350 to prevent gate snapping during auton - does it help?
     }
     public void zero_gate(DcMotor Gate) {
-        // TODO: backspin motor by a tiny bit to release pressure
+        // backspin motor by a tiny bit to release pressure
         Gate.setPower(0.1);
         sleep(50);
         Gate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -228,8 +210,9 @@ public class ftc_2025_functions extends LinearOpMode {
                 // Pose3D pose =  lime_result.getBotpose(); // [ X, Y, Z, roll, pitch, yaw, latency ]
             }
         }
-        telemetry.addData("Total Limelight Readings", total_read_counter);
-        telemetry.update();
+        // Display read counter - this refreshes way too fast and overwrites other messages
+//        telemetry.addData("Total Limelight Readings", total_read_counter);
+//        telemetry.update();
         if (!txs.isEmpty()) { // Has some readings, take average
             final_values.add(average(txs));
             final_values.add(average(tys));
@@ -310,76 +293,6 @@ public class ftc_2025_functions extends LinearOpMode {
         }
     }
 
-    public boolean auto_aim_x_only_sm(
-            Boolean is_blue, DcMotor FrontLeft, DcMotor FrontRight, DcMotor BackLeft, DcMotor BackRight,
-            Limelight limelight, Telemetry telemetry, Gamepad gamepad1, Follower follower
-    ) {
-        // Check if the shot is near or far4
-        boolean near_shot = is_near(limelight, telemetry);
-
-        // Set targets and power/time needed for incremental adjustment
-        double target_x = 0.0;
-        double x_tol = 3;
-        double x_power = 0.3;
-
-        if (! near_shot) { // far shooting
-            if (is_blue) {
-                target_x = -2;
-            } else {
-                target_x = 2;
-            }
-            x_tol = 0.5;
-            x_power = 0.2;
-        }
-
-        List<Double> limeReading = get_lime_reading(limelight, telemetry, false);
-        telemetry.addData("limeReading", limeReading);
-        telemetry.update();
-        if (! limeReading.isEmpty()) {
-            telemetry.addLine("Entering Aiming");
-            telemetry.update();
-            double curr_x = limeReading.get(0);
-            double curr_x_diff = curr_x - target_x;
-            if (curr_x_diff < -x_tol) {
-                telemetry.addLine("Rotate clockwise ->");
-                telemetry.update();
-
-                rotate_clockwise(FrontLeft, FrontRight, BackLeft, BackRight, x_power);
-                return false;
-            } else if (curr_x_diff > x_tol) {
-                telemetry.addLine("Rotate counterclockwise <-");
-                telemetry.update();
-
-                rotate_counter_clockwise(FrontLeft, FrontRight, BackLeft, BackRight, x_power);
-                return false;
-            } else {
-//                stop_drive(FrontLeft, FrontRight, BackLeft, BackRight, 0);
-                telemetry.addLine("Auto Aim Success!");
-                telemetry.update();
-                return true;
-            }
-        } else {
-            // Cannot get lime reading. Use heading to rotate
-            double curr_heading = follower.getHeading();
-            telemetry.addData("Current heading", curr_heading);
-            telemetry.update();
-            if (curr_heading > -45 && curr_heading < 135) {
-                telemetry.addLine("Cannot see Tag - Rotate clockwise ->");
-                telemetry.update();
-                rotate_clockwise(FrontLeft, FrontRight, BackLeft, BackRight, x_power);
-            }  else if (curr_heading < -60 || curr_heading >= 135) {
-                telemetry.addLine("Cannot see Tag - Rotate counterclockwise <-");
-                telemetry.update();
-                rotate_counter_clockwise(FrontLeft, FrontRight, BackLeft, BackRight, x_power);
-            } else {
-                telemetry.addLine("In range, do not rotate");
-                telemetry.update();
-//                stop_drive(FrontLeft, FrontRight, BackLeft, BackRight, 0);
-            }
-            return false;
-        }
-    }
-
     public static class AimResultPair {
         private final boolean success;
         private final long time_elapsed;
@@ -448,18 +361,15 @@ public class ftc_2025_functions extends LinearOpMode {
         List<Double> limeReading = get_lime_reading(limelight, telemetry, false);
         if (! limeReading.isEmpty()) {
             telemetry.addLine("Entering Aiming");
-            telemetry.update();
 
             int aim_steps_taken = 0;
             aimloop: while (! aimed) {
                 telemetry.addData("Aiming step", aim_steps_taken);
-                telemetry.update();
 
                 limeReading = get_lime_reading(limelight, telemetry,false);
                 if (limeReading.isEmpty()) {
                     fail_reason = 1;
                     telemetry.addData("Failed to read April Tag", "1");
-                    telemetry.update();
                     break;
                 }
                 double curr_x = limeReading.get(0);
@@ -484,7 +394,6 @@ public class ftc_2025_functions extends LinearOpMode {
                     if (limeReading.isEmpty()) {
                         fail_reason = 2;
                         telemetry.addData("Failed to read April Tag", "2");
-                        telemetry.update();
                         break aimloop;
                     }
                     curr_x = limeReading.get(0);
@@ -502,7 +411,6 @@ public class ftc_2025_functions extends LinearOpMode {
                 if (limeReading.isEmpty()) {
                     fail_reason = 3;
                     telemetry.addData("Failed to read April Tag", "3");
-                    telemetry.update();
                     break;
                 }
                 double curr_y = limeReading.get(1);
@@ -515,8 +423,6 @@ public class ftc_2025_functions extends LinearOpMode {
                                     Math.max(auto_aim_y_speed_booster * (-curr_y_diff/y_tol), 1), auto_aim_max_y_speed_booster);
                             move_back(FrontLeft, FrontRight, BackLeft, BackRight,
                                     y_power * power_boost);
-                            telemetry.addData("Y Power Multiplier", power_boost);
-                            telemetry.update();
 
                             sleep((long) (y_drive_time/power_boost));
                             stop_drive(FrontLeft, FrontRight, BackLeft, BackRight, 0);
@@ -525,8 +431,6 @@ public class ftc_2025_functions extends LinearOpMode {
                                     Math.max(auto_aim_y_speed_booster * (curr_y_diff/y_tol), 1), auto_aim_max_y_speed_booster);
                             move_forward(FrontLeft, FrontRight, BackLeft, BackRight,
                                     y_power * power_boost);
-                            telemetry.addData("Y Power Multiplier", power_boost);
-                            telemetry.update();
 
                             sleep((long) (y_drive_time/power_boost));
                             stop_drive(FrontLeft, FrontRight, BackLeft, BackRight, 0);
@@ -537,7 +441,6 @@ public class ftc_2025_functions extends LinearOpMode {
                         if (limeReading.isEmpty()) {
                             fail_reason = 4;
                             telemetry.addData("Failed to read April Tag", "4");
-                            telemetry.update();
                             break aimloop;
                         }
                         curr_y = limeReading.get(1);
@@ -557,7 +460,6 @@ public class ftc_2025_functions extends LinearOpMode {
                 if (limeReading.isEmpty()) {
                     fail_reason = 5;
                     telemetry.addData("Failed to read April Tag", "5");
-                    telemetry.update();
                     break;
                 }
                 curr_x = limeReading.get(0);
@@ -575,9 +477,10 @@ public class ftc_2025_functions extends LinearOpMode {
                     break;
                 }
             }
+        } else {
+            telemetry.addLine("Cannot see April tag at all: 999");
         }
-        telemetry.addLine("Aiming Done!");
-        telemetry.update();
+
         if (! aimed) {
             telemetry.addData("Auto Aim [FINAL CHECK]", "Failed... ");
             telemetry.addData("Fail Reason", fail_reason);
@@ -586,14 +489,13 @@ public class ftc_2025_functions extends LinearOpMode {
         } else {
             telemetry.addData("Auto Aim [FINAL CHECK]", "Success!");
         }
-        double dist = limelight.getLastDist();
-        telemetry.addData("Distance", dist);
         telemetry.update();
 
+        // The following Java timer call require API v26. We're at v24, hence not possible
 //        Instant end = Instant.now();
 //        Duration duration = Duration.between(start, end);
 //        long time_elapsed = duration.toMillis();
-        long time_elapsed = 300;
+        long time_elapsed = 300; // fake time
         return new AimResultPair(aimed, time_elapsed);
     }
 
@@ -642,13 +544,13 @@ public class ftc_2025_functions extends LinearOpMode {
             }
         }
     }
-    public void make_near_shot(double power_adj, boolean close_gate_after, DcMotor Intake, DcMotor Gate) {
-        // lift gate
-        lift_gate(true, Gate, Intake);
-
+    public void make_near_shot(double power_adj, boolean open_gate_before, boolean close_gate_after, DcMotor Intake, DcMotor Gate) {
+        if (open_gate_before) {
+            lift_gate(true, Gate, Intake);
+        }
         // shoot
         Intake.setPower(shoot_trigger_intake_pwr * power_adj);
-        sleep(1000); // TODO: Can we tune do wn to 1000?
+        sleep(1000); // TODO: Can we tune down?
         Intake.setPower(0);
 
         // close gate
@@ -657,20 +559,23 @@ public class ftc_2025_functions extends LinearOpMode {
             close_gate(Gate);
         }
     }
-    public void make_far_shot(double power_adj, boolean close_gate_after, DcMotor Intake, DcMotor Gate) {
-        // lift gate
-        lift_gate(true, Gate, Intake);
+    public void make_far_shot(double power_adj, boolean open_gate_before, boolean close_gate_after, DcMotor Intake, DcMotor Gate) {
+        if (open_gate_before) {
+            lift_gate(true, Gate, Intake);
+        }
 
         Intake.setPower(shoot_trigger_intake_pwr * power_adj);
-        sleep(150); // TODO: Can we tune down to 1000?
+        sleep(150); // TODO: Can we tune down?
         Intake.setPower(0);
-        sleep (250);
+        sleep (250); // TODO: Time for shooter to speed up again, can we turn it down?
+
         Intake.setPower(shoot_trigger_intake_pwr * power_adj);
-        sleep(250); // TODO: Can we tune down to 1000?
+        sleep(250); // TODO: Can we tune down?
         Intake.setPower(0);
-        sleep (900);
+        sleep (500); // TODO: Time for shooter to speed up again, can we turn it down?
+
         Intake.setPower(shoot_trigger_intake_pwr * power_adj);
-        sleep(450); // TODO: Can we tune down to 1000?
+        sleep(450); // TODO: Can we tune down?
         Intake.setPower(0);
 
         // close gate
@@ -685,8 +590,6 @@ public class ftc_2025_functions extends LinearOpMode {
     }
 
     @Override
-    public void runOpMode() throws InterruptedException {
-        ControlHub_VoltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
-    }
+    public void runOpMode() throws InterruptedException {    }
 }
 

@@ -46,8 +46,8 @@ public class auto_blue_proto extends OpMode {
     private final Pose goBack2CP = new Pose(43.041, 70.835); // Control Point
 
     private final Pose intake2End = new Pose(16.5, 56.319, Math.toRadians(182)); // Middle (Second Set) of Artifacts from the Spike Mark
-    private final Pose gateOpenCP = new Pose(74.310, 50.433); // Control Point
-    private final Pose gateOpenEnd = new Pose(15.812, 70.061, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark
+    private final Pose gateOpenCP = new Pose(40.310, 50.433); // Control Point
+    private final Pose gateOpenEnd = new Pose(15.7, 65, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark
     private final Pose intake3CP = new Pose(80.739, 19.423); // Control Point
     private final Pose intake3End = new Pose(15.5, 30.037, Math.toRadians(182)); // Lowest (Third Set) of Artifacts from the Spike Mark
     private final Pose park = new Pose(30.153, 82.491, Math.toRadians(180)); // Park in front of gate at end of auto
@@ -125,6 +125,7 @@ public class auto_blue_proto extends OpMode {
 
         intake2ToOpen = follower.pathBuilder()
                 .addPath(new BezierCurve(intake2End, gateOpenCP, gateOpenEnd))
+//                .addPath(new BezierLine(intake2End, gateOpenEnd))
                 .setLinearHeadingInterpolation(intake2End.getHeading(), gateOpenEnd.getHeading(), 0.9)
                 .build();
 
@@ -286,8 +287,8 @@ public class auto_blue_proto extends OpMode {
         ftc_fns.set_shooter_speed(
                 ftc_fns.near_shot_shooter_rpm, false, ShootLeft,
                 ShootRight, telemetry, gamepad1);
-        HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos+0.03);
-        HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos+0.03);
+        HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos_for_auto);
+        HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos_for_auto);
         Gate.setPower(ftc_fns.init_gate_lift_pwr * power_adj);
     }
 

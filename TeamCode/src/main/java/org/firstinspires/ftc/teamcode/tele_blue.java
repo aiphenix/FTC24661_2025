@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 
 @TeleOp
 public class tele_blue extends LinearOpMode {
-    ftc_2025_functions ftc_fns = new ftc_2025_functions(hardwareMap);
+    ftc_2025_functions ftc_fns = new ftc_2025_functions();
 
     // Private variables
     double intake_trigger = 0;
@@ -208,35 +208,45 @@ public class tele_blue extends LinearOpMode {
                     boolean aimed = result_pair.isSuccess();
 
                     if (aimed) {
+                        ftc_fns.lift_gate(false, Gate, Intake);
                         double dist = lime.getDistance();
                         telemetry.addData("distance", dist);
                         telemetry.update();
                         ftc_fns.set_shooter_speed(
                                 ftc_fns.near_shot_shooter_rpm * Math.sqrt(dist),
                                 true, ShootLeft, ShootRight, telemetry, gamepad1);
-                        ftc_fns.make_near_shot(power_adj, true, Intake, Gate);
+                        ftc_fns.make_near_shot(power_adj, false, true, Intake, Gate);
                     } else {
                         gamepad1.rumble(100);
                     }
                 } else if (near_shot == 0) { // far shot
+                    telemetry.addLine("In far shot 1");
+                    telemetry.update();
                     HoodLeft.setPosition(ftc_fns.far_shot_hood_servo_pos);
                     HoodRight.setPosition(ftc_fns.far_shot_hood_servo_pos);
-
+                    telemetry.addLine("In far shot 2");
+                    telemetry.update();
                     ftc_2025_functions.AimResultPair result_pair = ftc_fns.auto_aim(
                             true, true, FrontLeft, FrontRight, BackLeft, BackRight,
                             lime, telemetry, gamepad1);
+                    telemetry.addLine("In far shot 3");
+                    telemetry.update();
                     boolean aimed = result_pair.isSuccess();
-
+                    telemetry.addLine("In far shot 4");
+                    telemetry.update();
                     if (aimed) {
+                        ftc_fns.lift_gate(false, Gate, Intake);
                         double dist = lime.getDistance();
                         telemetry.addData("distance", dist);
                         telemetry.update();
                         ftc_fns.set_shooter_speed(
                                 ftc_fns.far_shot_shooter_rpm * Math.sqrt(dist/2.9),
                                 true, ShootLeft, ShootRight, telemetry, gamepad1);
-                        ftc_fns.make_far_shot(power_adj, true, Intake, Gate);
+                        ftc_fns.make_far_shot(power_adj, false,true, Intake, Gate);
                     } else {
-                        gamepad1.rumble(500);
+                        telemetry.addLine("Aiming Failed!");
+                        telemetry.update();
+//                        gamepad1.rumble(500);
                     }
                 }
             }
