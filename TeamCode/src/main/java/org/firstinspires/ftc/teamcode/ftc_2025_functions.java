@@ -25,24 +25,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ftc_2025_functions extends LinearOpMode {
-    private Limelight3A limelight;
-    private Servo HoodLeft;
-    private Servo HoodRight;
-    private DcMotor FrontRight;
-    private DcMotor FrontLeft;
-    private DcMotor BackRight;
-    private DcMotor BackLeft;
-    private DcMotorEx ShootRight;
-    private DcMotorEx ShootLeft;
     private VoltageSensor ControlHub_VoltageSensor;
 
     // --------------- Constants --------------
 
     // Initialization
     public double init_gate_lift_pwr = -0.2;
-    long total_init_gate_lift_time = 3500;
-    double auton_init_move_back_pwr = 0.5;
-    long auton_init_move_back_time = 1700;
     public int gate_down_position  = 490;
 
     // Shooting
@@ -58,48 +46,6 @@ public class ftc_2025_functions extends LinearOpMode {
     public double ball_intake_move_power_adj = 0.7;
     public double ball_pickup_intake_pwr = 0.65; // TODO: Can we tune down to 0.5?
     public long auton_time_to_leave_near_shot_area = 650;
-
-    // Spike 1
-    int rot_time1 = 170;
-    int strafe_time1 = 525; // 525 is too little, 575 is too much
-    int intake_time1 = 750; // 6725 is otherwise perfect but kicks the 3rd remaining ball a little too hard.
-    int strafe_back_time1 = 485;
-    int rot_back_time1 = 170;
-
-    // Spike 2
-    int rot_time2 = rot_time1; // TODO: should it be different from rot_time1?
-    int strafe_time2 = 1050;
-    int intake_time2 = intake_time1;
-    int strafe_back_time2 = 950;
-    int rot_back_time2 = rot_back_time1;
-
-    // Spike 3
-    int rot_time3 = rot_time1+10; // TODO: should it be different from rot_time1?
-    int strafe_time3 = 1650; // 1600 is too much, 1550 is not enough
-    int intake_time3 = intake_time1;
-    int strafe_back_time3 = 1550;
-    int rot_back_time3 = rot_back_time1+20;
-
-    // Spike 1 red
-    int rot_time1_red = rot_time1+32;
-    int strafe_time1_red = strafe_time1+15;
-    int intake_time1_red = intake_time1;
-    int strafe_back_time1_red = strafe_back_time1;
-    int rot_back_time1_red = rot_time1_red;
-
-    // Spike 2 red
-    int rot_time2_red = rot_time2+37;
-    int strafe_time2_red = strafe_time2+50;
-    int intake_time2_red = intake_time2;
-    int strafe_back_time2_red = strafe_back_time2+25;
-    int rot_back_time2_red = rot_time2_red;
-
-    // Spike 3 red
-    int rot_time3_red = rot_time3+60;
-    int strafe_time3_red = strafe_time3-50;
-    int intake_time3_red = intake_time3;
-    int strafe_back_time3_red = strafe_back_time3;
-    int rot_back_time3_red = rot_time3_red;
 
     // --------------- Functions --------------
 
@@ -522,13 +468,13 @@ public class ftc_2025_functions extends LinearOpMode {
                 while (Math.abs(curr_x_diff) > x_tol) {
                     if (curr_x_diff < -x_tol) {
                         double power_boost = Math.min(
-                                Math.max(auto_aim_y_speed_booster * (-curr_x_diff/y_tol), 1), auto_aim_max_x_speed_booster);
+                                Math.max(auto_aim_x_speed_booster * (-curr_x_diff/y_tol), 1), auto_aim_max_x_speed_booster);
                         rotate_clockwise(FrontLeft, FrontRight, BackLeft, BackRight, x_power * power_boost);
                         sleep((long) (x_drive_time / power_boost));
                         stop_drive(FrontLeft, FrontRight, BackLeft, BackRight,0);
                     } else {
                         double power_boost = Math.min(
-                                Math.max(auto_aim_y_speed_booster * (curr_x_diff/y_tol), 1), auto_aim_max_x_speed_booster);
+                                Math.max(auto_aim_x_speed_booster * (curr_x_diff/y_tol), 1), auto_aim_max_x_speed_booster);
                         rotate_counter_clockwise(FrontLeft, FrontRight, BackLeft, BackRight, x_power * power_boost);
                         sleep((long) (x_drive_time / power_boost));
                         stop_drive(FrontLeft, FrontRight, BackLeft, BackRight, 0);

@@ -26,11 +26,6 @@ public class tele_red extends LinearOpMode {
     ftc_2025_functions ftc_fns = new ftc_2025_functions(hardwareMap);
 
     // Private variables
-    double lx = 0;
-    double ly = 0;
-    double rx = 0;
-    double ry = 0;
-    double x_power = 0.3;
     double intake_trigger = 0;
     double spitout_trigger = 0;
     boolean intake_toggle = false;
