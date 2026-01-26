@@ -27,11 +27,11 @@ public class ftc_2025_functions extends LinearOpMode {
     public double far_shot_hood_servo_pos = 0.68;
     public double near_shot_shooter_rpm = 2450;
     public double far_shot_shooter_rpm = 3650;
-    public double shoot_trigger_intake_pwr = 1; // TODO: Can we turn it down to 0.9?
+    public double shoot_trigger_intake_pwr = 1;
 
     // Movement
     public double wheel_pwr = 1;
-    public double ball_pickup_intake_pwr = 0.65; // TODO: Can we tune down to 0.5?
+    public double ball_pickup_intake_pwr = 0.65;
     public long auton_time_to_leave_near_shot_area = 650;
 
     // --------------- Functions --------------
@@ -335,7 +335,7 @@ public class ftc_2025_functions extends LinearOpMode {
             Limelight limelight, Telemetry telemetry, Gamepad gamepad1) {
         // break before aim
         stop_drive(FrontLeft, FrontRight, BackLeft, BackRight,0);
-        sleep(50); // This proves to be necessary for aim to work TODO: see if needs to be raised or lowered
+        sleep(10); // This proves to be necessary for aim to work
 
         telemetry.addLine("Auto_aim started");
         telemetry.update();
@@ -402,16 +402,14 @@ public class ftc_2025_functions extends LinearOpMode {
                 while (Math.abs(curr_x_diff) > x_tol) {
                     if (curr_x_diff < -x_tol) {
                         double power_boost = Math.min(
-                                Math.max(auto_aim_x_speed_booster * (-curr_x_diff/y_tol), 1), auto_aim_max_x_speed_booster);
+                                Math.max(auto_aim_x_speed_booster * (-curr_x_diff/x_tol), 1), auto_aim_max_x_speed_booster);
                         rotate_clockwise(FrontLeft, FrontRight, BackLeft, BackRight, x_power * power_boost);
                         sleep((long) (x_drive_time / power_boost));
-                        stop_drive(FrontLeft, FrontRight, BackLeft, BackRight,0);
                     } else {
                         double power_boost = Math.min(
-                                Math.max(auto_aim_x_speed_booster * (curr_x_diff/y_tol), 1), auto_aim_max_x_speed_booster);
+                                Math.max(auto_aim_x_speed_booster * (curr_x_diff/x_tol), 1), auto_aim_max_x_speed_booster);
                         rotate_counter_clockwise(FrontLeft, FrontRight, BackLeft, BackRight, x_power * power_boost);
                         sleep((long) (x_drive_time / power_boost));
-                        stop_drive(FrontLeft, FrontRight, BackLeft, BackRight, 0);
                     }
 
                     limeReading = get_lime_reading(limelight, telemetry, false);
@@ -432,6 +430,8 @@ public class ftc_2025_functions extends LinearOpMode {
                         break aimloop;
                     }
                 }
+                // Stop rotation given X is aimed
+                stop_drive(FrontLeft, FrontRight, BackLeft, BackRight, 0);
 
                 double curr_y;
                 limeReading = get_lime_reading(limelight, telemetry, false);
@@ -453,7 +453,6 @@ public class ftc_2025_functions extends LinearOpMode {
                                     y_power * power_boost);
 
                             sleep((long) (y_drive_time/power_boost));
-                            stop_drive(FrontLeft, FrontRight, BackLeft, BackRight, 0);
                         } else {
                             double power_boost = Math.min(
                                     Math.max(auto_aim_y_speed_booster * (curr_y_diff/y_tol), 1), auto_aim_max_y_speed_booster);
@@ -461,7 +460,6 @@ public class ftc_2025_functions extends LinearOpMode {
                                     y_power * power_boost);
 
                             sleep((long) (y_drive_time/power_boost));
-                            stop_drive(FrontLeft, FrontRight, BackLeft, BackRight, 0);
 
                         }
 
@@ -483,6 +481,8 @@ public class ftc_2025_functions extends LinearOpMode {
                             break aimloop;
                         }
                     }
+                    // stop y-direction movements once aimed
+                    stop_drive(FrontLeft, FrontRight, BackLeft, BackRight, 0);
                 }
 
                 // check if aimed
@@ -509,6 +509,8 @@ public class ftc_2025_functions extends LinearOpMode {
                     break;
                 }
             }
+            // If breaking out of aimloop, stop bot:
+            stop_drive(FrontLeft, FrontRight, BackLeft, BackRight, 0);
         }
 
         if (!aimed) {
@@ -597,13 +599,13 @@ public class ftc_2025_functions extends LinearOpMode {
                 while (Math.abs(curr_x_diff) > x_tol) {
                     if (curr_x_diff < -x_tol) {
                         double power_boost = Math.min(
-                                Math.max(auto_aim_x_speed_booster * (-curr_x_diff/y_tol), 1), auto_aim_max_x_speed_booster);
+                                Math.max(auto_aim_x_speed_booster * (-curr_x_diff/x_tol), 1), auto_aim_max_x_speed_booster);
                         rotate_clockwise(FrontLeft, FrontRight, BackLeft, BackRight, x_power * power_boost);
                         sleep((long) (x_drive_time / power_boost));
                         stop_drive(FrontLeft, FrontRight, BackLeft, BackRight,0);
                     } else {
                         double power_boost = Math.min(
-                                Math.max(auto_aim_x_speed_booster * (curr_x_diff/y_tol), 1), auto_aim_max_x_speed_booster);
+                                Math.max(auto_aim_x_speed_booster * (curr_x_diff/x_tol), 1), auto_aim_max_x_speed_booster);
                         rotate_counter_clockwise(FrontLeft, FrontRight, BackLeft, BackRight, x_power * power_boost);
                         sleep((long) (x_drive_time / power_boost));
                         stop_drive(FrontLeft, FrontRight, BackLeft, BackRight, 0);
@@ -769,7 +771,7 @@ public class ftc_2025_functions extends LinearOpMode {
         }
         // shoot
         Intake.setPower(shoot_trigger_intake_pwr * power_adj);
-        sleep(800); // TODO: Can we tune down?
+        sleep(800);
         Intake.setPower(0);
 
         // close gate
@@ -784,17 +786,7 @@ public class ftc_2025_functions extends LinearOpMode {
         }
 
         Intake.setPower(shoot_trigger_intake_pwr * power_adj);
-        sleep(800); // TODO: Can we tune down?
-//        Intake.setPower(0);
-//        sleep (250); // TODO: Time for shooter to speed up again, can we turn it down?
-//
-//        Intake.setPower(shoot_trigger_intake_pwr * power_adj);
-//        sleep(250); // TODO: Can we tune down?
-//        Intake.setPower(0);
-//        sleep (500); // TODO: Time for shooter to speed up again, can we turn it down?
-//
-//        Intake.setPower(shoot_trigger_intake_pwr * power_adj);
-//        sleep(450); // TODO: Can we tune down?
+        sleep(800);
         Intake.setPower(0);
 
         // close gate
@@ -807,6 +799,39 @@ public class ftc_2025_functions extends LinearOpMode {
         ShootLeft.setPower(0);
         ShootRight.setPower(0);
     }
+
+    /**
+     * Get distance by limelight and guard against invalid readings.
+     *
+     * @param limelight Limelight class object
+     * @param near_shot Boolean on whether you're attempting a near shot
+     * @return a double value that is the distance from target in meters
+     */
+    public double get_dist_safe(Limelight limelight, Boolean near_shot) {
+        double near_default_value = 1;
+        double far_default_value = 3;
+        int max_n_readings = 10;
+        double min_valid_dist = 0.5;
+
+        double dist = 0;
+        int n_readings = 0;
+        while (dist < min_valid_dist) {
+            dist = limelight.getDistance();
+            n_readings++;
+            if (n_readings > max_n_readings) {
+                break;
+            }
+        }
+        if (dist < min_valid_dist) {
+            if (near_shot) {
+                dist = near_default_value;
+            } else {
+                dist = far_default_value;
+            }
+        }
+        return dist;
+    }
+
 
     @Override
     public void runOpMode() throws InterruptedException {    }
