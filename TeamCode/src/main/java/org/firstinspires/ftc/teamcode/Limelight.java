@@ -11,14 +11,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import java.util.List;
 
 public class Limelight {
-
     private final Limelight3A limelight;
     private LLResult result;
-    private double dist;
     private int tagId;
-    private double xFromTag;
-    private double lastDist = 0;
-    private double lastTx = 0;
+    private double dist, xFromTag, yFromTag, aFromTag;
 
     public Limelight(HardwareMap hardwareMap, int pipeLine) {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -41,17 +37,15 @@ public class Limelight {
             tagId = fr.getFiducialId();
             dist = result.getBotposeAvgDist();
             xFromTag = result.getTx();
-            lastDist = dist;
-            lastTx = xFromTag;
+            yFromTag = result.getTy();
+            aFromTag = result.getTa();
         } else {
             tagId = -1; // no tag seen
-            dist = 3.14159;   // or some safe default
+            dist = -999;   // or some safe default
+            xFromTag = -999;
+            yFromTag = -999;
+            aFromTag = -999;
         }
-    }
-
-    public double getDistance() {
-        update();
-        return dist;
     }
 
     public int getTagID() {
@@ -59,17 +53,23 @@ public class Limelight {
         return tagId;
     }
 
+    public double getDistance() {
+        update();
+        return dist;
+    }
+
     public double getxFromTag() {
         update();
         return xFromTag;
     }
 
-    public double getLastDist() {
+    public double getyFromTag() {
         update();
-        return lastDist;
+        return yFromTag;
     }
 
-    public double getLastTx() {
-        return lastTx;
+    public double getaFromTag() {
+        update();
+        return aFromTag;
     }
 }

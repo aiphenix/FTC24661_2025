@@ -22,11 +22,11 @@ public class ftc_2025_functions extends LinearOpMode {
     public int gate_down_position  = 490;
 
     // Shooting
-    public double near_shot_hood_servo_pos = 0.63;
-    public double near_shot_hood_servo_pos_for_auto = near_shot_hood_servo_pos;
+    public double near_shot_hood_servo_pos = 0.61;
+    public double near_shot_hood_servo_pos_for_auto = near_shot_hood_servo_pos + 0.02;
     public double far_shot_hood_servo_pos = 0.68;
     public double near_shot_shooter_rpm = 2450;
-    public double far_shot_shooter_rpm = 3600;
+    public double far_shot_shooter_rpm = 3650;
     public double shoot_trigger_intake_pwr = 1; // TODO: Can we turn it down to 0.9?
 
     // Movement
@@ -94,24 +94,24 @@ public class ftc_2025_functions extends LinearOpMode {
     // gate function
     public void lift_gate(boolean wait_till_completion, DcMotor Gate, DcMotor Intake) {
         // stop intake in case it is still forward spinning.
-        Intake.setPower(0);
-        sleep(25);
-        // unroll the intake to release pressure on gate
-        Intake.setPower(-0.2);
-        sleep(75);
-        Intake.setPower(0);
+//        Intake.setPower(0);
+//        sleep(25);
+//        // unroll the intake to release pressure on gate
+//        Intake.setPower(-0.2);
+//        sleep(75);
+//        Intake.setPower(0);
 
         // Lift gate
         Gate.setTargetPosition(0);
 
         if (wait_till_completion) {
-            while (Gate.getCurrentPosition() > 0) {
-                sleep(100);
+            while (Gate.getCurrentPosition() > 175) {
+                sleep(10);
             }
         }
     }
     public void close_gate(DcMotor Gate) {
-        Gate.setTargetPosition(gate_down_position); // TODO: changed from 1350 to prevent gate snapping during auton - does it help?
+        Gate.setTargetPosition(gate_down_position);
     }
     public void zero_gate(DcMotor Gate) {
         // backspin motor by a tiny bit to release pressure
@@ -252,33 +252,6 @@ public class ftc_2025_functions extends LinearOpMode {
             return true; // if neither x nor y checks triggers an error, return true
         }
     }
-    public int is_near_3(Limelight limelight, Telemetry telemetry) {
-        double dist = limelight.getDistance();
-        if (dist == 0) {
-            return -1; // bad read
-        } else if (dist < 2) {
-            return 1; // near shot
-        } else {
-            return 0; // far shot
-        }
-    }
-
-    public int is_near_2(Limelight limelight, Telemetry telemetry) {
-        List<Double> bot_pos = get_lime_reading(limelight, telemetry,false);
-        if (bot_pos.isEmpty()) {
-            telemetry.addData("Near / Far check", "FAILED!");
-            telemetry.update();
-            return -1; // return true because it doesn't matter as the bot can't aim anyway
-        } else {
-            telemetry.addData("Target Area %", bot_pos.get(2));
-            telemetry.update();
-            if (bot_pos.get(2) > 0.8) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
-    }
 
     public boolean is_near(Limelight limelight, Telemetry telemetry) {
         List<Double> bot_pos = get_lime_reading(limelight, telemetry,false);
@@ -290,6 +263,53 @@ public class ftc_2025_functions extends LinearOpMode {
             telemetry.addData("Target Area %", bot_pos.get(2));
             telemetry.update();
             return bot_pos.get(2) > 0.8;
+        }
+    }
+
+    /**
+     * New Implementation of near/far check with Limelight.java class.
+     * <p>
+     * Returns
+     *     -1 if cannot see tag
+     *     1 if bot is in near zone (tag area > 0.8)
+     *     0 if bot is in far zone (tag area <= 0.8)
+     *
+     * @param limelight Limelight object
+     */
+    public int is_near_1(Limelight limelight) {
+        double area = limelight.getaFromTag();
+        if (area < 0.01) {
+            return -1;
+        } else if (area > 0.8) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    public int is_near_2(Limelight limelight, Telemetry telemetry) {
+        List<Double> bot_pos = get_lime_reading(limelight, telemetry,false);
+        if (bot_pos.isEmpty()) {
+            telemetry.addData("Near / Far check", "FAILED!");
+            return -1; // return true because it doesn't matter as the bot can't aim anyway
+        } else {
+            telemetry.addData("Target Area %", bot_pos.get(2));
+            if (bot_pos.get(2) > 0.8) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    public int is_near_3(Limelight limelight, Telemetry telemetry) {
+        double dist = limelight.getDistance();
+        if (dist == 0) {
+            return -1; // bad read
+        } else if (dist < 2) {
+            return 1; // near shot
+        } else {
+            return 0; // far shot
         }
     }
 
@@ -315,7 +335,7 @@ public class ftc_2025_functions extends LinearOpMode {
             Limelight limelight, Telemetry telemetry, Gamepad gamepad1) {
         // break before aim
         stop_drive(FrontLeft, FrontRight, BackLeft, BackRight,0);
-        sleep(300); // This proves to be necessary for aim to work TODO: see if needs to be raised or lowered
+        sleep(50); // This proves to be necessary for aim to work TODO: see if needs to be raised or lowered
 
         telemetry.addLine("Auto_aim started");
         telemetry.update();
@@ -328,7 +348,7 @@ public class ftc_2025_functions extends LinearOpMode {
         int max_x_y_tries = 70;
 
         // Check if the shot is near or far4
-        boolean near_shot = is_near(limelight, telemetry);
+        int near_shot = is_near_2(limelight, telemetry);
         // Set targets and power/time needed for incremental adjustment
         double target_x = 0.0;
         double x_tol = 3;
@@ -340,7 +360,7 @@ public class ftc_2025_functions extends LinearOpMode {
         double y_power = 0.2;
         long y_drive_time = 25;
 
-        if (! near_shot) { // far shooting
+        if (near_shot == 0) { // far shooting
             if (is_blue) {
                 target_x = -2;
             } else {
@@ -358,18 +378,22 @@ public class ftc_2025_functions extends LinearOpMode {
 
         boolean aimed = false;
         int fail_reason = 0;
-        List<Double> limeReading = get_lime_reading(limelight, telemetry, false);
-        if (! limeReading.isEmpty()) {
+
+        List<Double> limeReading;
+        if (near_shot == -1) {
+            fail_reason = 1;
+            telemetry.addData("Cannot see April tag at all!", fail_reason);
+        } else {
             telemetry.addLine("Entering Aiming");
 
             int aim_steps_taken = 0;
-            aimloop: while (! aimed) {
+            aimloop: while (!aimed) {
                 telemetry.addData("Aiming step", aim_steps_taken);
 
                 limeReading = get_lime_reading(limelight, telemetry,false);
                 if (limeReading.isEmpty()) {
-                    fail_reason = 1;
-                    telemetry.addData("Failed to read April Tag", "1");
+                    fail_reason = 2;
+                    telemetry.addData("Failed to read initial X", fail_reason);
                     break;
                 }
                 double curr_x = limeReading.get(0);
@@ -392,14 +416,16 @@ public class ftc_2025_functions extends LinearOpMode {
 
                     limeReading = get_lime_reading(limelight, telemetry, false);
                     if (limeReading.isEmpty()) {
-                        fail_reason = 2;
-                        telemetry.addData("Failed to read April Tag", "2");
+                        fail_reason = 3;
+                        telemetry.addData("Failed to read X while turning", fail_reason);
                         break aimloop;
                     }
                     curr_x = limeReading.get(0);
                     curr_x_diff = curr_x - target_x;
                     x_tries++;
                     if (x_tries > max_x_y_tries) {
+                        fail_reason = 4;
+                        telemetry.addData("Reached max X tries", fail_reason);
                         break aimloop;
                     }
                     if (gamepad1.backWasPressed()) {
@@ -407,16 +433,18 @@ public class ftc_2025_functions extends LinearOpMode {
                     }
                 }
 
+                double curr_y;
                 limeReading = get_lime_reading(limelight, telemetry, false);
-                if (limeReading.isEmpty()) {
-                    fail_reason = 3;
-                    telemetry.addData("Failed to read April Tag", "3");
-                    break;
-                }
-                double curr_y = limeReading.get(1);
-                double curr_y_diff = curr_y - target_y;
-                long y_tries = 0;
                 if (!skip_y) {
+                    if (limeReading.isEmpty()) {
+                        fail_reason = 5;
+                        telemetry.addData("Failed to read initial Y", fail_reason);
+                        break;
+                    }
+                    curr_y = limeReading.get(1);
+                    double curr_y_diff = curr_y - target_y;
+                    long y_tries = 0;
+
                     while (Math.abs(curr_y_diff) > y_tol) {
                         if (curr_y - target_y < -y_tol) {
                             double power_boost = Math.min(
@@ -439,14 +467,16 @@ public class ftc_2025_functions extends LinearOpMode {
 
                         limeReading = get_lime_reading(limelight, telemetry,false);
                         if (limeReading.isEmpty()) {
-                            fail_reason = 4;
-                            telemetry.addData("Failed to read April Tag", "4");
+                            fail_reason = 6;
+                            telemetry.addData("Failed to read Y while moving", fail_reason);
                             break aimloop;
                         }
                         curr_y = limeReading.get(1);
                         curr_y_diff = curr_y - target_y;
                         y_tries++;
                         if (y_tries > max_x_y_tries) {
+                            fail_reason = 7;
+                            telemetry.addData("Reached max Y tries", fail_reason);
                             break aimloop;
                         }
                         if (gamepad1.backWasPressed()) {
@@ -458,8 +488,8 @@ public class ftc_2025_functions extends LinearOpMode {
                 // check if aimed
                 limeReading = get_lime_reading(limelight, telemetry,false);
                 if (limeReading.isEmpty()) {
-                    fail_reason = 5;
-                    telemetry.addData("Failed to read April Tag", "5");
+                    fail_reason = 8;
+                    telemetry.addData("Cannot read April Tag in final check", fail_reason);
                     break;
                 }
                 curr_x = limeReading.get(0);
@@ -471,21 +501,210 @@ public class ftc_2025_functions extends LinearOpMode {
                 }
                 aim_steps_taken++;
                 if (aim_steps_taken > max_aim_steps) {
+                    fail_reason = 9;
+                    telemetry.addData("Reached max aim steps", fail_reason);
                     break;
                 }
                 if (gamepad1.backWasPressed()) {
                     break;
                 }
             }
-        } else {
-            telemetry.addLine("Cannot see April tag at all: 999");
         }
 
-        if (! aimed) {
+        if (!aimed) {
             telemetry.addData("Auto Aim [FINAL CHECK]", "Failed... ");
             telemetry.addData("Fail Reason", fail_reason);
-            gamepad1.rumble(250);
-            gamepad1.rumbleBlips(100);
+        } else {
+            telemetry.addData("Auto Aim [FINAL CHECK]", "Success!");
+        }
+        telemetry.update();
+
+        // The following Java timer call require API v26. We're at v24, hence not possible
+//        Instant end = Instant.now();
+//        Duration duration = Duration.between(start, end);
+//        long time_elapsed = duration.toMillis();
+        long time_elapsed = 300; // fake time
+        return new AimResultPair(aimed, time_elapsed);
+    }
+
+    public AimResultPair auto_aim1 (
+            Boolean is_blue, Boolean skip_y, DcMotor FrontLeft, DcMotor FrontRight, DcMotor BackLeft, DcMotor BackRight,
+            Limelight limelight, Telemetry telemetry, Gamepad gamepad1) {
+        // break before aim
+        stop_drive(FrontLeft, FrontRight, BackLeft, BackRight,0);
+        sleep(50); // This proves to be necessary for aim to work TODO: see if needs to be raised or lowered
+
+        telemetry.addLine("Auto_aim started");
+        telemetry.update();
+//        Instant start = Instant.now();
+        int auto_aim_x_speed_booster = 1;
+        double auto_aim_max_x_speed_booster = 1;
+        int auto_aim_y_speed_booster = 1;
+        double auto_aim_max_y_speed_booster = 1;
+        int max_aim_steps = 40;
+        int max_x_y_tries = 70;
+
+        // Check if the shot is near or far4
+        int near_shot = is_near_1(limelight);
+        // Set targets and power/time needed for incremental adjustment
+        double target_x = 0.0;
+        double x_tol = 3;
+        double x_power = 0.3;
+        long x_drive_time = 20;
+
+        double target_y = -11.6;
+        double y_tol = 0.15;
+        double y_power = 0.2;
+        long y_drive_time = 25;
+
+        if (near_shot == 0) { // far shooting
+            if (is_blue) {
+                target_x = -2;
+            } else {
+                target_x = 2;
+            }
+            x_tol = 0.5;
+            x_power = 0.2;
+            x_drive_time = 10;
+
+            target_y = 7.9;
+            y_tol = 0.1;
+            y_power = 0.2;
+            y_drive_time = 10;
+        }
+
+        boolean aimed = false;
+        int fail_reason = 0;
+
+        if (near_shot == -1) {
+            fail_reason = 1;
+            telemetry.addData("Cannot see April tag at all!", fail_reason);
+        } else {
+            telemetry.addLine("Entering Aiming");
+
+            int aim_steps_taken = 0;
+            aimloop: while (!aimed) {
+                telemetry.addData("Aiming step", aim_steps_taken);
+
+                double curr_x = limelight.getxFromTag();
+                if (curr_x == -999) {
+                    fail_reason = 2;
+                    telemetry.addData("Failed to read initial X", fail_reason);
+                    break;
+                }
+                double curr_x_diff = curr_x - target_x;
+                long x_tries = 0;
+                while (Math.abs(curr_x_diff) > x_tol) {
+                    if (curr_x_diff < -x_tol) {
+                        double power_boost = Math.min(
+                                Math.max(auto_aim_x_speed_booster * (-curr_x_diff/y_tol), 1), auto_aim_max_x_speed_booster);
+                        rotate_clockwise(FrontLeft, FrontRight, BackLeft, BackRight, x_power * power_boost);
+                        sleep((long) (x_drive_time / power_boost));
+                        stop_drive(FrontLeft, FrontRight, BackLeft, BackRight,0);
+                    } else {
+                        double power_boost = Math.min(
+                                Math.max(auto_aim_x_speed_booster * (curr_x_diff/y_tol), 1), auto_aim_max_x_speed_booster);
+                        rotate_counter_clockwise(FrontLeft, FrontRight, BackLeft, BackRight, x_power * power_boost);
+                        sleep((long) (x_drive_time / power_boost));
+                        stop_drive(FrontLeft, FrontRight, BackLeft, BackRight, 0);
+                    }
+
+                    curr_x = limelight.getxFromTag();
+                    if (curr_x == -999) {
+                        fail_reason = 3;
+                        telemetry.addData("Failed to read X while turning", fail_reason);
+                        break aimloop;
+                    }
+                    curr_x_diff = curr_x - target_x;
+                    x_tries++;
+                    if (x_tries > max_x_y_tries) {
+                        fail_reason = 4;
+                        telemetry.addData("Reached max X tries", fail_reason);
+                        break aimloop;
+                    }
+                    if (gamepad1.backWasPressed()) {
+                        break aimloop;
+                    }
+                }
+
+                double curr_y;
+                if (!skip_y) {
+                    curr_y = limelight.getyFromTag();
+                    if (curr_y == -999) {
+                        fail_reason = 5;
+                        telemetry.addData("Failed to read initial Y", fail_reason);
+                        break;
+                    }
+                    double curr_y_diff = curr_y - target_y;
+                    long y_tries = 0;
+
+                    while (Math.abs(curr_y_diff) > y_tol) {
+                        if (curr_y - target_y < -y_tol) {
+                            double power_boost = Math.min(
+                                    Math.max(auto_aim_y_speed_booster * (-curr_y_diff/y_tol), 1), auto_aim_max_y_speed_booster);
+                            move_back(FrontLeft, FrontRight, BackLeft, BackRight,
+                                    y_power * power_boost);
+
+                            sleep((long) (y_drive_time/power_boost));
+                            stop_drive(FrontLeft, FrontRight, BackLeft, BackRight, 0);
+                        } else {
+                            double power_boost = Math.min(
+                                    Math.max(auto_aim_y_speed_booster * (curr_y_diff/y_tol), 1), auto_aim_max_y_speed_booster);
+                            move_forward(FrontLeft, FrontRight, BackLeft, BackRight,
+                                    y_power * power_boost);
+
+                            sleep((long) (y_drive_time/power_boost));
+                            stop_drive(FrontLeft, FrontRight, BackLeft, BackRight, 0);
+
+                        }
+
+                        curr_y = limelight.getyFromTag();
+                        if (curr_y == -999) {
+                            fail_reason = 6;
+                            telemetry.addData("Failed to read Y while turning", fail_reason);
+                            break aimloop;
+                        }
+                        curr_y_diff = curr_y - target_y;
+                        y_tries++;
+                        if (y_tries > max_x_y_tries) {
+                            fail_reason = 7;
+                            telemetry.addData("Reached max Y tries", fail_reason);
+                            break aimloop;
+                        }
+                        if (gamepad1.backWasPressed()) {
+                            break aimloop;
+                        }
+                    }
+                }
+
+                // check if aimed
+                curr_x = limelight.getxFromTag();
+                curr_y = limelight.getyFromTag();
+                if (curr_x == -999 | curr_y == -999) {
+                    fail_reason = 8;
+                    telemetry.addData("Cannot read April Tag in final check", fail_reason);
+                    break;
+                }
+                if (!skip_y && Math.abs(curr_x - target_x) <= x_tol && Math.abs(curr_y - target_y) <= y_tol) {
+                    aimed = true;
+                } else if (skip_y && Math.abs(curr_x - target_x) <= x_tol) {
+                    aimed = true;
+                }
+                aim_steps_taken++;
+                if (aim_steps_taken > max_aim_steps) {
+                    fail_reason = 9;
+                    telemetry.addData("Reached max aim steps", fail_reason);
+                    break;
+                }
+                if (gamepad1.backWasPressed()) {
+                    break;
+                }
+            }
+        }
+
+        if (!aimed) {
+            telemetry.addData("Auto Aim [FINAL CHECK]", "Failed... ");
+            telemetry.addData("Fail Reason", fail_reason);
         } else {
             telemetry.addData("Auto Aim [FINAL CHECK]", "Success!");
         }
@@ -550,12 +769,12 @@ public class ftc_2025_functions extends LinearOpMode {
         }
         // shoot
         Intake.setPower(shoot_trigger_intake_pwr * power_adj);
-        sleep(1000); // TODO: Can we tune down?
+        sleep(800); // TODO: Can we tune down?
         Intake.setPower(0);
 
         // close gate
         if (close_gate_after) {
-            sleep(100); // sleep to be safe no ball is being pushed by intake TODO: tune down to 50?
+            sleep(50); // sleep to be safe no ball is being pushed by intake TODO: tune down to 50?
             close_gate(Gate);
         }
     }
@@ -565,22 +784,22 @@ public class ftc_2025_functions extends LinearOpMode {
         }
 
         Intake.setPower(shoot_trigger_intake_pwr * power_adj);
-        sleep(150); // TODO: Can we tune down?
-        Intake.setPower(0);
-        sleep (250); // TODO: Time for shooter to speed up again, can we turn it down?
-
-        Intake.setPower(shoot_trigger_intake_pwr * power_adj);
-        sleep(250); // TODO: Can we tune down?
-        Intake.setPower(0);
-        sleep (500); // TODO: Time for shooter to speed up again, can we turn it down?
-
-        Intake.setPower(shoot_trigger_intake_pwr * power_adj);
-        sleep(450); // TODO: Can we tune down?
+        sleep(800); // TODO: Can we tune down?
+//        Intake.setPower(0);
+//        sleep (250); // TODO: Time for shooter to speed up again, can we turn it down?
+//
+//        Intake.setPower(shoot_trigger_intake_pwr * power_adj);
+//        sleep(250); // TODO: Can we tune down?
+//        Intake.setPower(0);
+//        sleep (500); // TODO: Time for shooter to speed up again, can we turn it down?
+//
+//        Intake.setPower(shoot_trigger_intake_pwr * power_adj);
+//        sleep(450); // TODO: Can we tune down?
         Intake.setPower(0);
 
         // close gate
         if (close_gate_after) {
-            sleep(100); // sleep to be safe no ball is being pushed by intake TODO: tune down to 50?
+            sleep(50); // sleep to be safe no ball is being pushed by intake TODO: tune down to 50?
             close_gate(Gate);
         }
     }

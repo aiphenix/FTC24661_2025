@@ -40,6 +40,8 @@ public class auto_blue_proto extends OpMode {
     // PedroPath points
     private final Pose start = new Pose(27.511, 128.237, Math.toRadians(135)); // Start pose of our robot
     private final Pose score = new Pose(47.801, 96.002, Math.toRadians(135)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle
+    private final Pose score_backward = new Pose(47.801, 96.002, Math.toRadians(315)); // Spinning on spot for
+
     private final Pose intake1CP = new Pose(62.934, 73.673); // Control Point
     private final Pose intake1End = new Pose(19.5, 80.393, Math.toRadians(182)); // Highest (First Set) of Artifacts from the Spike Mark
     private final Pose intake2CP = new Pose(81.156, 43.807); // Control Point
@@ -51,7 +53,7 @@ public class auto_blue_proto extends OpMode {
     private final Pose intake3CP = new Pose(80.739, 19.423); // Control Point
     private final Pose intake3End = new Pose(15.5, 30.037, Math.toRadians(182)); // Lowest (Third Set) of Artifacts from the Spike Mark
     private final Pose park = new Pose(30.153, 82.491, Math.toRadians(180)); // Park in front of gate at end of auto
-    private PathChain startToScore, scoreToIntake1, intake1ToScore, scoreToIntake2,
+    private PathChain startToScore, scoreToBackward, scoreToIntake1, intake1ToScore, scoreToIntake2,
             intake2ToScore, intake2ToOpen, scoreToIntake3, intake3ToScore, scoreToPark;
 
     private enum SHOOTING {
@@ -93,6 +95,10 @@ public class auto_blue_proto extends OpMode {
                 break;
             case 8:
                 waitThenFollowPath(0, intake2ToOpen, 1, 4);
+            case 9:
+                // Test spinning on spot - doesn't work
+                waitThenFollowPath(0, scoreToBackward, 1, 3);
+
         }
     }
 
@@ -101,6 +107,11 @@ public class auto_blue_proto extends OpMode {
         startToScore = follower.pathBuilder()
                 .addPath(new BezierLine(start, score))
                 .setLinearHeadingInterpolation(start.getHeading(), score.getHeading(), 0.75)
+                .addParametricCallback(1, () -> ftc_fns.zero_gate(Gate))
+                .build();
+        scoreToBackward = follower.pathBuilder()
+                .addPath(new BezierLine(score, score_backward))
+                .setLinearHeadingInterpolation(score.getHeading(), score_backward.getHeading(), 1)
                 .addParametricCallback(1, () -> ftc_fns.zero_gate(Gate))
                 .build();
 
@@ -298,7 +309,10 @@ public class auto_blue_proto extends OpMode {
         autonomousPathUpdate();
         telemetry.addData("Path State", pathState);
         telemetry.addData("Follower State", follower.isBusy());
-        telemetry.addData("SHOOTING STATE: ", s_states.toString());
+        telemetry.addData("Shooting State", s_states.toString());
+        telemetry.addData("Target Shooter Speed (tps)", ftc_fns.convert_rpm_to_tps(ftc_fns.near_shot_shooter_rpm));
+        telemetry.addData("Left Shooter Speed (tps)", ShootLeft.getVelocity());
+        telemetry.addData("Right Shooter Speed (tps)", ShootRight.getVelocity());
         telemetry.addData("Is Timer Set: ", wasActionTimerReset);
         telemetry.addData("Action Timer", actionTimer.getElapsedTimeSeconds());
         telemetry.addData("Gate Position", Gate.getCurrentPosition());
