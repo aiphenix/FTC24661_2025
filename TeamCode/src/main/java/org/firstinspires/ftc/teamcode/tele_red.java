@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,7 +10,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import com.pedropathing.follower.Follower;
@@ -20,7 +18,6 @@ import com.pedropathing.paths.PathChain;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
 
 
 @TeleOp
@@ -145,6 +142,12 @@ public class tele_red extends LinearOpMode {
             // Left toggle to spin up/down shooter
             if (gamepad1.leftBumperWasPressed()) {
                 shoot_toggle = ! shoot_toggle;
+                if (ShootLeft.getVelocity() > ftc_fns.convert_rpm_to_tps(ftc_fns.near_shot_shooter_rpm * 0.8)
+                        | ShootRight.getVelocity() > ftc_fns.convert_rpm_to_tps(ftc_fns.near_shot_shooter_rpm * 0.8)) {
+                    ftc_fns.set_shooter_speed(
+                            0, false, ShootLeft, ShootRight, telemetry, gamepad1);
+                    shoot_toggle = false;
+                }
                 if (shoot_toggle) { // speed up shooter wheel to near shot rpm
                     ftc_fns.set_shooter_speed(
                             ftc_fns.near_shot_shooter_rpm, true, ShootLeft, ShootRight, telemetry, gamepad1);
