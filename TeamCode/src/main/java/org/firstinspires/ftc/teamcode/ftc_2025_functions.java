@@ -610,7 +610,7 @@ public class ftc_2025_functions extends LinearOpMode {
         }
         // shoot
         Intake.setPower(shoot_trigger_intake_pwr * power_adj);
-        sleep(800);
+        sleep(900);
         Intake.setPower(0);
 
         // close gate
@@ -625,7 +625,7 @@ public class ftc_2025_functions extends LinearOpMode {
         }
 
         Intake.setPower(shoot_trigger_intake_pwr * power_adj);
-        sleep(800);
+        sleep(900);
         Intake.setPower(0);
 
         // close gate
