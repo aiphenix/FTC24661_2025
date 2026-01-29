@@ -32,7 +32,7 @@ public class ftc_2025_functions extends LinearOpMode {
 
     // Movement
     public double wheel_pwr = 1;
-    public double ball_pickup_intake_pwr = 0.65;
+    public double ball_pickup_intake_pwr = 0.7;
     public long auton_time_to_leave_near_shot_area = 650;
 
     // --------------- Functions --------------
@@ -347,7 +347,7 @@ public class ftc_2025_functions extends LinearOpMode {
         double auto_aim_y_speed_booster = 1;
         double auto_aim_max_y_speed_booster = 1;
         int max_aim_steps = 40;
-        int max_x_y_tries = 70;
+        int max_x_y_tries = 350;
 
         // Check if the shot is near or far4
         int near_shot = is_near_2(limelight, telemetry);
@@ -370,7 +370,7 @@ public class ftc_2025_functions extends LinearOpMode {
             }
             x_tol = 0.4;
             x_power = 0.2;
-            x_drive_time = 10;
+            x_drive_time = 2;
 
             target_y = 7.9;
             y_tol = 0.1;

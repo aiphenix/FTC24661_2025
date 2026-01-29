@@ -241,7 +241,8 @@ public class tele_blue extends LinearOpMode {
                             double dist = ftc_fns.get_dist_safe(lime, false);
                             telemetry.addData("distance", dist);
                             ftc_fns.set_shooter_speed(
-                                    ftc_fns.far_shot_shooter_rpm * Math.sqrt(dist/2.9),
+//                                    ftc_fns.far_shot_shooter_rpm * Math.sqrt(dist/2.9),
+                                    ftc_fns.far_shot_shooter_rpm * 0.5 * dist / Math.sqrt(dist - 1),
                                     true, ShootLeft, ShootRight, telemetry, gamepad1);
                             ftc_fns.make_far_shot(power_adj, true, true, Intake, Gate);
                         } else {

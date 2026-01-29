@@ -64,7 +64,7 @@ public class auto_blue_3sp extends OpMode {
         startToScore = follower.pathBuilder()
                 .addPath(new BezierLine(start, score))
                 .setLinearHeadingInterpolation(start.getHeading(), score.getHeading(), 0.75)
-                .addParametricCallback(1, () -> ftc_fns.zero_gate(Gate))
+                .addParametricCallback(0, () -> ftc_fns.zero_gate(Gate))
                 .build();
 
         // Intake and score first artifact group
@@ -118,22 +118,22 @@ public class auto_blue_3sp extends OpMode {
                 waitThenFollowPath(1, startToScore,  1, 1);
                 break;
             case 1:
-                shootThenFollowPath(1, scoreToIntake1, 0.85, 2);
+                shootThenFollowPath(1, scoreToIntake1, 1, 2);
                 break;
             case 2:
-                waitThenFollowPath(0.5, intake1ToScore, 1, 3);
+                waitThenFollowPath(0.1, intake1ToScore, 1, 3);
                 break;
             case 3:
-                shootThenFollowPath(0, scoreToIntake2, 0.85, 4);
+                shootThenFollowPath(0, scoreToIntake2, 1, 4);
                 break;
             case 4:
-                waitThenFollowPath(0.5, intake2ToScore, 1, 5);
+                waitThenFollowPath(0.1, intake2ToScore, 1, 5);
                 break;
             case 5:
-                shootThenFollowPath(0, scoreToIntake3, 0.85, 6);
+                shootThenFollowPath(0, scoreToIntake3, 1, 6);
                 break;
             case 6:
-                waitThenFollowPath(0.5, intake3ToScore, 1, 7);
+                waitThenFollowPath(0.1, intake3ToScore, 1, 7);
                 break;
             case 7:
                 shootThenFollowPath(0, scoreToPark, 1, -1);
@@ -162,11 +162,11 @@ public class auto_blue_3sp extends OpMode {
                         actionTimer.resetTimer();
                         wasActionTimerReset = true;
                     } else {
-                        if (actionTimer.getElapsedTimeSeconds() > 0.05) {
+                        if (actionTimer.getElapsedTimeSeconds() > 0.02) {
                             Intake.setPower(-0.2);
                         }
 
-                        if (actionTimer.getElapsedTimeSeconds() > 0.2) {
+                        if (actionTimer.getElapsedTimeSeconds() > 0.1) {
                             Intake.setPower(0);
                             s_states = SHOOTING.LIFT_GATE;
                             wasActionTimerReset = false;
@@ -273,7 +273,7 @@ public class auto_blue_3sp extends OpMode {
                 ShootRight, telemetry, gamepad1);
         HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos_for_auto);
         HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos_for_auto);
-        Gate.setPower(ftc_fns.init_gate_lift_pwr * power_adj); // zero gate happens at end of path startToScore
+//        Gate.setPower(ftc_fns.init_gate_lift_pwr * power_adj); // zero gate happens at end of path startToScore
     }
 
     @Override
