@@ -353,7 +353,7 @@ public class ftc_2025_functions extends LinearOpMode {
         int near_shot = is_near_2(limelight, telemetry);
         // Set targets and power/time needed for incremental adjustment
         double target_x = 0.0;
-        double x_tol = 2;
+        double x_tol = 1.75;
         double x_power = 0.3;
         long x_drive_time = 10;
 
@@ -590,8 +590,8 @@ public class ftc_2025_functions extends LinearOpMode {
         double tps = convert_rpm_to_tps(rpm);
         double shooter_left_act_vel = ShootLeft.getVelocity();
         double shooter_right_act_vel = ShootRight.getVelocity();
-        while (Math.abs(shooter_left_act_vel / tps - 1) > 0.03
-                || Math.abs(shooter_right_act_vel / tps - 1) > 0.03) {
+        while (Math.abs(shooter_left_act_vel / tps - 1) > 0.01
+                && Math.abs(shooter_right_act_vel / tps - 1) > 0.01) {
             sleep(50); // TODO: Can we tune down to 50?
             shooter_left_act_vel = ShootLeft.getVelocity();
             shooter_right_act_vel = ShootRight.getVelocity();
