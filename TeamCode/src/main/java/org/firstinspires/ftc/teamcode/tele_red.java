@@ -220,7 +220,7 @@ public class tele_red extends LinearOpMode {
                         boolean aimed = result_pair.isSuccess();
 
                         if (aimed) {
-                            double dist = lime.getDistance();
+                            double dist = ftc_fns.get_dist_safe(lime, true);
                             telemetry.addData("distance", dist);
                             telemetry.update();
                             ftc_fns.set_shooter_speed(
@@ -238,7 +238,7 @@ public class tele_red extends LinearOpMode {
                                 lime, telemetry, gamepad1);
                         boolean aimed = result_pair.isSuccess();
                         if (aimed) {
-                            double dist = lime.getDistance();
+                            double dist = ftc_fns.get_dist_safe(lime, false);
                             telemetry.addData("distance", dist);
                             ftc_fns.set_shooter_speed(
 //                                    ftc_fns.far_shot_shooter_rpm * Math.sqrt(dist/2.9),

@@ -88,8 +88,8 @@ public class ftc_2025_functions extends LinearOpMode {
         // Set shooter PIDF coefs
         ShootRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         ShootLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        ShootLeft.setVelocityPIDFCoefficients(125, 0, 0, 16.8);
-        ShootRight.setVelocityPIDFCoefficients(125, 0, 0, 16.8);
+        ShootLeft.setVelocityPIDFCoefficients(120, 0, 0, 16.8);
+        ShootRight.setVelocityPIDFCoefficients(120, 0, 0, 16.8);
     }
 
     // gate function
@@ -212,8 +212,8 @@ public class ftc_2025_functions extends LinearOpMode {
             }
         }
         // Display read counter - this refreshes way too fast and overwrites other messages
-        telemetry.addData("Total Limelight Readings", total_read_counter);
-        telemetry.update();
+//        telemetry.addData("Total Limelight Readings", total_read_counter);
+//        telemetry.update();
         if (!txs.isEmpty()) { // Has some readings, take average
             final_values.add(average(txs));
             final_values.add(average(tys));
@@ -352,8 +352,8 @@ public class ftc_2025_functions extends LinearOpMode {
         // Check if the shot is near or far4
         int near_shot = is_near_2(limelight, telemetry);
         // Set targets and power/time needed for incremental adjustment
-        double target_x = 0.0;
-        double x_tol = 1.75;
+        double target_x = 0;
+        double x_tol = 1;
         double x_power = 0.3;
         long x_drive_time = 10;
 
@@ -364,11 +364,11 @@ public class ftc_2025_functions extends LinearOpMode {
 
         if (near_shot == 0) { // far shooting
             if (is_blue) {
-                target_x = -2;
+                target_x = -3.5;
             } else {
-                target_x = 2;
+                target_x = 3.5;
             }
-            x_tol = 0.4;
+            x_tol = 0.3;
             x_power = 0.2;
             x_drive_time = 2;
 
@@ -590,8 +590,9 @@ public class ftc_2025_functions extends LinearOpMode {
         double tps = convert_rpm_to_tps(rpm);
         double shooter_left_act_vel = ShootLeft.getVelocity();
         double shooter_right_act_vel = ShootRight.getVelocity();
-        while (Math.abs(shooter_left_act_vel / tps - 1) > 0.01
-                && Math.abs(shooter_right_act_vel / tps - 1) > 0.01) {
+//        while (Math.abs(shooter_left_act_vel / tps - 1) > 0.01
+//                && Math.abs(shooter_right_act_vel / tps - 1) > 0.01) {
+        while (Math.abs((shooter_left_act_vel + shooter_right_act_vel) / (2 * tps) - 1) > 0.01) {
             sleep(50); // TODO: Can we tune down to 50?
             shooter_left_act_vel = ShootLeft.getVelocity();
             shooter_right_act_vel = ShootRight.getVelocity();
@@ -630,7 +631,7 @@ public class ftc_2025_functions extends LinearOpMode {
 
         // close gate
         if (close_gate_after) {
-            sleep(50); // sleep to be safe no ball is being pushed by intake TODO: tune down to 50?
+            sleep(50); // sleep to be safe no ball is being pushed by intake
             close_gate(Gate);
         }
     }

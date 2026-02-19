@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous
-public class auto_blue_gateopen extends OpMode {
+public class auto_red_far_2sp_nohp extends OpMode { // no human player
     private Follower follower;
     private Timer pathTimer, actionTimer;
     private boolean wasActionTimerReset = false;
@@ -36,20 +36,15 @@ public class auto_blue_gateopen extends OpMode {
 
 
     // PedroPath points
-    private final Pose start = new Pose(27.511, 128.237, Math.toRadians(135)); // Start pose of our robot
-    private final Pose score = new Pose(47.801, 96.002, Math.toRadians(135)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle
-    private final Pose intake1CP = new Pose(62.934, 72.673); // Control Point
-    private final Pose intake1End = new Pose(19.5, 80.393, Math.toRadians(182)); // Highest (First Set) of Artifacts from the Spike Mark
-    private final Pose openGateCP = new Pose(33.3, 78.26); // Control Point
-    private final Pose openGateEnd = new Pose(16.45, 74.9, Math.toRadians(85)); // Open gate after first spike
-    private final Pose intake2CP = new Pose(74.7, 43.5); // Control Point
-    private final Pose intake2End = new Pose(15.2, 54, Math.toRadians(182)); // Middle (Second Set) of Artifacts from the Spike Mark
-    private final Pose intake2RetCP = new Pose(40.5, 60.1, Math.toRadians(182)); // Middle (Second Set) of Artifacts from the Spike Mark
-    private final Pose intake3CP = new Pose(77, 16.2); // Control Point
-    private final Pose intake3End = new Pose(15.5, 30.037, Math.toRadians(182)); // Lowest (Third Set) of Artifacts from the Spike Mark
-    private final Pose park = new Pose(30.153, 82.491, Math.toRadians(180)); // Park in front of gate at end of auto
-    private PathChain startToScore, scoreToIntake1, intake1ToOpenGate, openGateToScore,  scoreToIntake2,
-            intake2ToScore, scoreToIntake3, intake3ToScore, scoreToPark;
+    private final Pose start = new Pose(144 - 57.33, 8.937, Math.toRadians(180 - 90)); // Start pose of our robot
+    private final Pose score = new Pose(144 - 59.156, 20.957, Math.toRadians(180 - 115)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle
+    private final Pose intake1CP = new Pose(144 - 61.721, 35.292); // Control Point
+    private final Pose intake1End = new Pose(144 - 13.41, 37, Math.toRadians(180 - 182)); // Highest (First Set) of Artifacts from the Spike Mark
+    private final Pose intake2CP = new Pose(144 - 61.113, 73.57); // Control Point
+    private final Pose intake2End = new Pose(144 - 14.59, 58, Math.toRadians(180 - 182)); // Lowest (Third Set) of Artifacts from the Spike Mark
+    private final Pose park = new Pose(144 - 30.153, 82.491, Math.toRadians(180 - 180)); // Park in front of gate at end of auto
+    private PathChain startToScore, scoreToIntake1, intake1ToScore, scoreToIntake2,
+            intake2ToScore, scoreToPark;
 
     private enum SHOOTING {
         PREWAIT,
@@ -73,40 +68,24 @@ public class auto_blue_gateopen extends OpMode {
         // Intake and score first artifact group
         scoreToIntake1 = follower.pathBuilder()
                 .addPath(new BezierCurve(score, intake1CP, intake1End))
-                .setLinearHeadingInterpolation(score.getHeading(), intake1End.getHeading(), 0.2)
+                .setLinearHeadingInterpolation(score.getHeading(), intake1End.getHeading(), 0.5)
                 .addParametricCallback(0.2, () -> Intake.setPower(ftc_fns.ball_pickup_intake_pwr * power_adj))
                 .build();
-        intake1ToOpenGate = follower.pathBuilder()
-                .addPath(new BezierCurve(intake1End, openGateCP, openGateEnd))
-                .setLinearHeadingInterpolation(intake1End.getHeading(), openGateEnd.getHeading(), 0.8)
-                .build();
-        openGateToScore = follower.pathBuilder()
-                .addPath(new BezierLine(openGateEnd, score))
-                .setLinearHeadingInterpolation(openGateEnd.getHeading(), score.getHeading(), 0.99)
+        intake1ToScore = follower.pathBuilder()
+                .addPath(new BezierLine(intake1End, score))
+                .setLinearHeadingInterpolation(intake1End.getHeading(), score.getHeading(), 0.99)
                 .addParametricCallback(0.99, () -> Intake.setPower(0))
                 .build();
 
         // Intake and score second artifact group
         scoreToIntake2 = follower.pathBuilder()
                 .addPath(new BezierCurve(score, intake2CP, intake2End))
-                .setLinearHeadingInterpolation(score.getHeading(), intake2End.getHeading(), 0.4)
+                .setLinearHeadingInterpolation(score.getHeading(), intake2End.getHeading(), 0.7)
                 .addParametricCallback(0.3, () -> Intake.setPower(ftc_fns.ball_pickup_intake_pwr * power_adj))
                 .build();
         intake2ToScore = follower.pathBuilder()
-                .addPath(new BezierCurve(intake2End, intake2RetCP, score))
+                .addPath(new BezierLine(intake2End, score))
                 .setLinearHeadingInterpolation(intake2End.getHeading(), score.getHeading(), 0.99)
-                .addParametricCallback(0.99, () -> Intake.setPower(0))
-                .build();
-
-        // Intake and score third artifact group
-        scoreToIntake3 = follower.pathBuilder()
-                .addPath(new BezierCurve(score, intake3CP, intake3End))
-                .setLinearHeadingInterpolation(score.getHeading(), intake3End.getHeading(), 0.6)
-                .addParametricCallback(0.4, () -> Intake.setPower(ftc_fns.ball_pickup_intake_pwr * power_adj))
-                .build();
-        intake3ToScore = follower.pathBuilder()
-                .addPath(new BezierLine(intake3End, score))
-                .setLinearHeadingInterpolation(intake3End.getHeading(), score.getHeading(), 0.99)
                 .addParametricCallback(0.99, () -> Intake.setPower(0))
                 .build();
 
@@ -128,24 +107,15 @@ public class auto_blue_gateopen extends OpMode {
                 shootThenFollowPath(1, scoreToIntake1, 1, 2);
                 break;
             case 2:
-                waitThenFollowPath(0.1, intake1ToOpenGate, 1, 3);
+                waitThenFollowPath(0.1, intake1ToScore, 1, 3);
                 break;
             case 3:
-                waitThenFollowPath(0.8, openGateToScore, 1, 4);
+                shootThenFollowPath(0, scoreToIntake2, 1, 4);
                 break;
             case 4:
-                shootThenFollowPath(0, scoreToIntake2, 1, 5);
+                waitThenFollowPath(0.1, intake2ToScore, 1, 5);
                 break;
             case 5:
-                waitThenFollowPath(0.1, intake2ToScore, 1, 6);
-                break;
-            case 6:
-                shootThenFollowPath(0, scoreToIntake3, 1, 7);
-                break;
-            case 7:
-                waitThenFollowPath(0.1, intake3ToScore, 1, 8);
-                break;
-            case 8:
                 shootThenFollowPath(0, scoreToPark, 1, -1);
                 break;
         }
@@ -279,10 +249,10 @@ public class auto_blue_gateopen extends OpMode {
     public void start() {
         // Run shooter wheel during entire auto session
         ftc_fns.set_shooter_speed(
-                ftc_fns.near_shot_shooter_rpm, false, ShootLeft,
+                ftc_fns.far_shot_shooter_rpm, false, ShootLeft,
                 ShootRight, telemetry, gamepad1);
-        HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos_for_auto);
-        HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos_for_auto);
+        HoodLeft.setPosition(ftc_fns.far_shot_hood_servo_pos);
+        HoodRight.setPosition(ftc_fns.far_shot_hood_servo_pos);
 //        Gate.setPower(ftc_fns.init_gate_lift_pwr * power_adj); // zero gate happens at end of path startToScore
     }
 

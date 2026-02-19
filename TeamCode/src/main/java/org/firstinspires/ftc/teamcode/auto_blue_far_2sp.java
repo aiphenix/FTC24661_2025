@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous
-public class auto_blue_far_2sp extends OpMode {
+public class auto_blue_far_2sp extends OpMode { // requires human player
     private Follower follower;
     private Timer pathTimer, actionTimer;
     private boolean wasActionTimerReset = false;

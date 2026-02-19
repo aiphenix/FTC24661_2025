@@ -41,7 +41,7 @@ public class auto_blue_3sp extends OpMode {
     private final Pose intake1CP = new Pose(62.934, 73.673); // Control Point
     private final Pose intake1End = new Pose(19.5, 80.393, Math.toRadians(182)); // Highest (First Set) of Artifacts from the Spike Mark
     private final Pose intake2CP = new Pose(81.156, 43.807); // Control Point
-    private final Pose intake2End = new Pose(16.5, 56.319, Math.toRadians(182)); // Middle (Second Set) of Artifacts from the Spike Mark
+    private final Pose intake2End = new Pose(16, 56.319, Math.toRadians(182)); // Middle (Second Set) of Artifacts from the Spike Mark
     private final Pose intake3CP = new Pose(80.739, 19.423); // Control Point
     private final Pose intake3End = new Pose(15.5, 30.037, Math.toRadians(182)); // Lowest (Third Set) of Artifacts from the Spike Mark
     private final Pose park = new Pose(30.153, 82.491, Math.toRadians(180)); // Park in front of gate at end of auto

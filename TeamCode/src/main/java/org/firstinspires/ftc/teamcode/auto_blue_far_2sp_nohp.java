@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous
-public class auto_blue_far_2sp_nohp extends OpMode {
+public class auto_blue_far_2sp_nohp extends OpMode { // no human player
     private Follower follower;
     private Timer pathTimer, actionTimer;
     private boolean wasActionTimerReset = false;
@@ -40,9 +40,6 @@ public class auto_blue_far_2sp_nohp extends OpMode {
     private final Pose score = new Pose(59.156, 20.957, Math.toRadians(115)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle
     private final Pose intake1CP = new Pose(61.721, 35.292); // Control Point
     private final Pose intake1End = new Pose(13.41, 37, Math.toRadians(182)); // Highest (First Set) of Artifacts from the Spike Mark
-//    private final Pose intake2SetUpCP = new Pose(18.44, 55.54); // Control Point
-//    private final Pose intake2SetUpEnd = new Pose(9.452, 31.75, Math.toRadians(270)); // Middle (Second Set) of Artifacts from the Spike Mark
-//    private final Pose intake2End = new Pose(11, 14, Math.toRadians(270)); // Middle (Second Set) of Artifacts from the Spike Mark
     private final Pose intake2CP = new Pose(61.113, 73.57); // Control Point
     private final Pose intake2End = new Pose(14.59, 58, Math.toRadians(182)); // Lowest (Third Set) of Artifacts from the Spike Mark
     private final Pose park = new Pose(30.153, 82.491, Math.toRadians(180)); // Park in front of gate at end of auto
