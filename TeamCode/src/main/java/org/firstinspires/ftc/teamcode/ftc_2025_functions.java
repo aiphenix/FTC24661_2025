@@ -17,15 +17,17 @@ import java.util.List;
 
 public class ftc_2025_functions extends LinearOpMode {
     // --------------- Constants --------------
+    public double pidf_p = 150;
+    public double pidf_f = 16.8;
 
     // Initialization
     public double init_gate_lift_pwr = -0.2;
     public int gate_down_position  = 490;
 
     // Shooting
-    public double near_shot_hood_servo_pos = 0.61;
+    public double near_shot_hood_servo_pos = 0.69;
     public double near_shot_hood_servo_pos_for_auto = near_shot_hood_servo_pos + 0.02;
-    public double far_shot_hood_servo_pos = 0.68;
+    public double far_shot_hood_servo_pos = 0.7;
     public double near_shot_shooter_rpm = 2450;
     public double far_shot_shooter_rpm = 3650;
     public double shoot_trigger_intake_pwr = 1;
@@ -88,8 +90,8 @@ public class ftc_2025_functions extends LinearOpMode {
         // Set shooter PIDF coefs
         ShootRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         ShootLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        ShootLeft.setVelocityPIDFCoefficients(120, 0, 0, 16.8);
-        ShootRight.setVelocityPIDFCoefficients(120, 0, 0, 16.8);
+        ShootLeft.setVelocityPIDFCoefficients(pidf_p, 0, 0, pidf_f);
+        ShootRight.setVelocityPIDFCoefficients(pidf_p, 0, 0, pidf_f);
     }
 
     // gate function
@@ -218,6 +220,7 @@ public class ftc_2025_functions extends LinearOpMode {
             final_values.add(average(txs));
             final_values.add(average(tys));
             final_values.add(average(tas));
+            telemetry.addData("Limelight X values:", txs);
 //            final_values.add(poses.get(poses.size()-1));
         } else {
             // final_values will all be an empty lists
@@ -236,7 +239,7 @@ public class ftc_2025_functions extends LinearOpMode {
     public boolean check_lime_reading_is_valid(
             List<Double> final_values, List<Double> txs,
             List<Double> tys, List<Double> tas, Telemetry telemetry) {
-        double tolerance_thresh = 0.2; // 2 0% tolerance
+        double tolerance_thresh = 0.2; // 20% tolerance
         if (final_values.isEmpty()) {
             // empty list is always valid
             return true;
@@ -340,7 +343,6 @@ public class ftc_2025_functions extends LinearOpMode {
         sleep(10); // This proves to be necessary for aim to work
 
         telemetry.addLine("Auto_aim started");
-        telemetry.update();
 //        Instant start = Instant.now();
         double auto_aim_x_speed_booster = 1;
         double auto_aim_max_x_speed_booster = 1;
@@ -353,24 +355,24 @@ public class ftc_2025_functions extends LinearOpMode {
         int near_shot = is_near_2(limelight, telemetry);
         // Set targets and power/time needed for incremental adjustment
         double target_x = 0;
-        double x_tol = 1;
+        double x_tol = 3.5; // This value has to be above 3 because post aim inertia drift is ~1-2 degrees
         double x_power = 0.3;
-        long x_drive_time = 10;
+        long x_drive_time = 1;
 
         double target_y = -11.6;
         double y_tol = 0.15;
         double y_power = 0.2;
-        long y_drive_time = 25;
+        long y_drive_time = 10;
 
         if (near_shot == 0) { // far shooting
             if (is_blue) {
-                target_x = -3.5;
+                target_x = -1;
             } else {
-                target_x = 3.5;
+                target_x = 1;
             }
-            x_tol = 0.3;
+            x_tol = 2; // This value has to be above 3 because post aim inertia drift is ~1-2 degrees
             x_power = 0.2;
-            x_drive_time = 2;
+            x_drive_time = 1;
 
             target_y = 7.9;
             y_tol = 0.1;
@@ -407,12 +409,12 @@ public class ftc_2025_functions extends LinearOpMode {
                         double power_boost = Math.min(
                                 Math.max(auto_aim_x_speed_booster * (-curr_x_diff/x_tol), 1), auto_aim_max_x_speed_booster);
                         rotate_clockwise(FrontLeft, FrontRight, BackLeft, BackRight, x_power * power_boost);
-                        sleep((long) (x_drive_time / power_boost));
+                        sleep(x_drive_time);
                     } else {
                         double power_boost = Math.min(
                                 Math.max(auto_aim_x_speed_booster * (curr_x_diff/x_tol), 1), auto_aim_max_x_speed_booster);
                         rotate_counter_clockwise(FrontLeft, FrontRight, BackLeft, BackRight, x_power * power_boost);
-                        sleep((long) (x_drive_time / power_boost));
+                        sleep(x_drive_time);
                     }
 
                     limeReading = get_lime_reading(limelight, telemetry, false);
@@ -596,9 +598,9 @@ public class ftc_2025_functions extends LinearOpMode {
             sleep(50); // TODO: Can we tune down to 50?
             shooter_left_act_vel = ShootLeft.getVelocity();
             shooter_right_act_vel = ShootRight.getVelocity();
-            telemetry.addData("Shooter want speed", tps);
-            telemetry.addData("Shooter left actual speed", shooter_left_act_vel);
-            telemetry.addData("Shooter right actual speed", shooter_right_act_vel);
+            telemetry.addData("Shooter want speed (rpm)", convert_tps_to_rpm(tps));
+            telemetry.addData("Shooter left actual speed (rpm)", convert_tps_to_rpm(shooter_left_act_vel));
+            telemetry.addData("Shooter right actual speed (rpm)", convert_tps_to_rpm(shooter_right_act_vel));
             telemetry.update();
             if (gamepad1.backWasPressed()) {
                 break;

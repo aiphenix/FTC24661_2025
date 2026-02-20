@@ -43,7 +43,7 @@ public class auto_blue_gateopen extends OpMode {
     private final Pose openGateCP = new Pose(33.3, 78.26); // Control Point
     private final Pose openGateEnd = new Pose(16.45, 74.9, Math.toRadians(85)); // Open gate after first spike
     private final Pose intake2CP = new Pose(74.7, 43.5); // Control Point
-    private final Pose intake2End = new Pose(15.2, 54, Math.toRadians(182)); // Middle (Second Set) of Artifacts from the Spike Mark
+    private final Pose intake2End = new Pose(15.5, 54, Math.toRadians(182)); // Middle (Second Set) of Artifacts from the Spike Mark
     private final Pose intake2RetCP = new Pose(40.5, 60.1, Math.toRadians(182)); // Middle (Second Set) of Artifacts from the Spike Mark
     private final Pose intake3CP = new Pose(77, 16.2); // Control Point
     private final Pose intake3End = new Pose(15.5, 30.037, Math.toRadians(182)); // Lowest (Third Set) of Artifacts from the Spike Mark
