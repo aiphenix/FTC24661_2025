@@ -221,13 +221,19 @@ public class tele_red extends LinearOpMode {
 
                         if (aimed) {
                             double dist = ftc_fns.get_dist_safe(lime, true);
-                            telemetry.addData("distance", dist);
-                            telemetry.update();
+                            telemetry.addData("Near shot aim succeeded - distance", dist);
                             ftc_fns.set_shooter_speed(
-                                    ftc_fns.near_shot_shooter_rpm * Math.sqrt(dist),
+                                    ftc_fns.near_shot_shooter_rpm * 0.866 * dist / (Math.sqrt(dist - 0.25)),
                                     true, ShootLeft, ShootRight, telemetry, gamepad1);
                             ftc_fns.make_near_shot(power_adj, true, true, Intake, Gate);
-                            ftc_fns.power_down_shooter(ShootLeft, ShootRight);
+                            // Slow down shooter but not to 0
+                            ShootLeft.setVelocityPIDFCoefficients(ftc_fns.pidf_p/4, 0, 0, ftc_fns.pidf_f/4);
+                            ShootRight.setVelocityPIDFCoefficients(ftc_fns.pidf_p/4, 0,  0, ftc_fns.pidf_f/4);
+                            ShootLeft.setPower(0.4);
+                            ShootRight.setPower(0.4);
+                            ShootLeft.setVelocityPIDFCoefficients(ftc_fns.pidf_p, 0, 0, ftc_fns.pidf_f);
+                            ShootRight.setVelocityPIDFCoefficients(ftc_fns.pidf_p, 0, 0, ftc_fns.pidf_f);
+//                            ftc_fns.power_down_shooter(ShootLeft, ShootRight);
                         } else {
                             gamepad1.rumble(100);
                         }
@@ -240,13 +246,20 @@ public class tele_red extends LinearOpMode {
                         boolean aimed = result_pair.isSuccess();
                         if (aimed) {
                             double dist = ftc_fns.get_dist_safe(lime, false);
-                            telemetry.addData("distance", dist);
+                            telemetry.addData("Far shot aim succeeded - distance", dist);
                             ftc_fns.set_shooter_speed(
 //                                    ftc_fns.far_shot_shooter_rpm * Math.sqrt(dist/2.9),
-                                    ftc_fns.far_shot_shooter_rpm * 0.57 * dist / Math.sqrt(dist - 1),
+                                    ftc_fns.far_shot_shooter_rpm * 0.65 * dist / Math.sqrt(dist - 1),
                                     true, ShootLeft, ShootRight, telemetry, gamepad1);
                             ftc_fns.make_far_shot(power_adj, true, true, Intake, Gate);
-                            ftc_fns.power_down_shooter(ShootLeft, ShootRight);
+                            // Slow down shooter but not to 0
+                            ShootLeft.setVelocityPIDFCoefficients(ftc_fns.pidf_p/4, 0, 0, ftc_fns.pidf_f/4);
+                            ShootRight.setVelocityPIDFCoefficients(ftc_fns.pidf_p/4, 0,  0, ftc_fns.pidf_f/4);
+                            ShootLeft.setPower(0.7);
+                            ShootRight.setPower(0.7);
+                            ShootLeft.setVelocityPIDFCoefficients(ftc_fns.pidf_p, 0, 0, ftc_fns.pidf_f);
+                            ShootRight.setVelocityPIDFCoefficients(ftc_fns.pidf_p, 0, 0, ftc_fns.pidf_f);
+//                            ftc_fns.power_down_shooter(ShootLeft, ShootRight);
                         } else {
                             telemetry.addLine("Aiming Failed!");
                         }
