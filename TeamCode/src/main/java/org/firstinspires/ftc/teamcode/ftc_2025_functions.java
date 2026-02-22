@@ -25,11 +25,11 @@ public class ftc_2025_functions extends LinearOpMode {
     public int gate_down_position  = 490;
 
     // Shooting
-    public double near_shot_hood_servo_pos = 0.69;
+    public double near_shot_hood_servo_pos = 0.73;
     public double near_shot_hood_servo_pos_for_auto = near_shot_hood_servo_pos + 0.02;
     public double far_shot_hood_servo_pos = 0.7;
-    public double near_shot_shooter_rpm = 2450;
-    public double far_shot_shooter_rpm = 3650;
+    public double near_shot_shooter_rpm = 2650;
+    public double far_shot_shooter_rpm = 3300;
     public double shoot_trigger_intake_pwr = 1;
 
     // Movement
@@ -267,7 +267,7 @@ public class ftc_2025_functions extends LinearOpMode {
         } else {
             telemetry.addData("Target Area %", bot_pos.get(2));
             telemetry.update();
-            return bot_pos.get(2) > 0.8;
+            return bot_pos.get(2) > 0.6;
         }
     }
 
@@ -285,7 +285,7 @@ public class ftc_2025_functions extends LinearOpMode {
         double area = limelight.getaFromTag();
         if (area < 0.01) {
             return -1;
-        } else if (area > 0.8) {
+        } else if (area > 0.6) {
             return 1;
         } else {
             return 0;
@@ -299,7 +299,7 @@ public class ftc_2025_functions extends LinearOpMode {
             return -1; // return true because it doesn't matter as the bot can't aim anyway
         } else {
             telemetry.addData("Target Area %", bot_pos.get(2));
-            if (bot_pos.get(2) > 0.8) {
+            if (bot_pos.get(2) > 0.6) {
                 return 1;
             } else {
                 return 0;
@@ -366,9 +366,9 @@ public class ftc_2025_functions extends LinearOpMode {
 
         if (near_shot == 0) { // far shooting
             if (is_blue) {
-                target_x = -1;
+                target_x = -1.5;
             } else {
-                target_x = 1;
+                target_x = 1.5;
             }
             x_tol = 2; // This value has to be above 3 because post aim inertia drift is ~1-2 degrees
             x_power = 0.2;
@@ -618,7 +618,7 @@ public class ftc_2025_functions extends LinearOpMode {
 
         // close gate
         if (close_gate_after) {
-            sleep(50); // sleep to be safe no ball is being pushed by intake TODO: tune down to 50?
+            sleep(60); // sleep to be safe no ball is being pushed by intake
             close_gate(Gate);
         }
     }
@@ -633,7 +633,7 @@ public class ftc_2025_functions extends LinearOpMode {
 
         // close gate
         if (close_gate_after) {
-            sleep(50); // sleep to be safe no ball is being pushed by intake
+            sleep(60); // sleep to be safe no ball is being pushed by intake
             close_gate(Gate);
         }
     }

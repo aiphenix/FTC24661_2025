@@ -222,6 +222,14 @@ public class tele_red extends LinearOpMode {
                         if (aimed) {
                             double dist = ftc_fns.get_dist_safe(lime, true);
                             telemetry.addData("Near shot aim succeeded - distance", dist);
+                            if (dist < 1.15 & dist > 0.9) {
+                                HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos+0.1);
+                                HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos+0.1);
+                            }
+                            if (dist <= 0.9) {
+                                HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos+0.2);
+                                HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos+0.2);
+                            }
                             ftc_fns.set_shooter_speed(
                                     ftc_fns.near_shot_shooter_rpm * 0.866 * dist / (Math.sqrt(dist - 0.25)),
                                     true, ShootLeft, ShootRight, telemetry, gamepad1);
@@ -233,6 +241,8 @@ public class tele_red extends LinearOpMode {
                             ShootRight.setPower(0.4);
                             ShootLeft.setVelocityPIDFCoefficients(ftc_fns.pidf_p, 0, 0, ftc_fns.pidf_f);
                             ShootRight.setVelocityPIDFCoefficients(ftc_fns.pidf_p, 0, 0, ftc_fns.pidf_f);
+                            HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos);
+                            HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos);
 //                            ftc_fns.power_down_shooter(ShootLeft, ShootRight);
                         } else {
                             gamepad1.rumble(100);
@@ -255,8 +265,8 @@ public class tele_red extends LinearOpMode {
                             // Slow down shooter but not to 0
                             ShootLeft.setVelocityPIDFCoefficients(ftc_fns.pidf_p/4, 0, 0, ftc_fns.pidf_f/4);
                             ShootRight.setVelocityPIDFCoefficients(ftc_fns.pidf_p/4, 0,  0, ftc_fns.pidf_f/4);
-                            ShootLeft.setPower(0.7);
-                            ShootRight.setPower(0.7);
+                            ShootLeft.setPower(0.8);
+                            ShootRight.setPower(0.8);
                             ShootLeft.setVelocityPIDFCoefficients(ftc_fns.pidf_p, 0, 0, ftc_fns.pidf_f);
                             ShootRight.setVelocityPIDFCoefficients(ftc_fns.pidf_p, 0, 0, ftc_fns.pidf_f);
 //                            ftc_fns.power_down_shooter(ShootLeft, ShootRight);
