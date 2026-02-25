@@ -203,8 +203,8 @@ public class auto_red_gateopen extends OpMode {
                     }
                     break;
                 case CLOSE_GATE:
-                    Gate.setTargetPosition(480);
-                    if (Gate.getCurrentPosition() >= 475) {
+                    Gate.setTargetPosition(ftc_fns.gate_down_position);
+                    if (Gate.getCurrentPosition() >= ftc_fns.gate_down_position - 5) {
                         s_states = SHOOTING.FOLLOW;
                     }
                     break;

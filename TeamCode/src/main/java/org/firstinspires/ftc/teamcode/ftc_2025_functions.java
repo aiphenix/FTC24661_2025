@@ -26,10 +26,10 @@ public class ftc_2025_functions extends LinearOpMode {
 
     // Shooting
     public double near_shot_hood_servo_pos = 0.73;
-    public double near_shot_hood_servo_pos_for_auto = near_shot_hood_servo_pos + 0.02;
+    public double near_shot_hood_servo_pos_for_auto = near_shot_hood_servo_pos + 0.025;
     public double far_shot_hood_servo_pos = 0.7;
-    public double near_shot_shooter_rpm = 2650;
-    public double far_shot_shooter_rpm = 3300;
+    public double near_shot_shooter_rpm = 3050;
+    public double far_shot_shooter_rpm = 4050;
     public double shoot_trigger_intake_pwr = 1;
 
     // Movement
