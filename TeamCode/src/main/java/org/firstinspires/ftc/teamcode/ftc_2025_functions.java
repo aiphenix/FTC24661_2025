@@ -2,6 +2,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -17,7 +18,7 @@ import java.util.List;
 
 public class ftc_2025_functions extends LinearOpMode {
     // --------------- Constants --------------
-    public double pidf_p = 150;
+    public double pidf_p = 175;
     public double pidf_f = 16.8;
 
     // Initialization
@@ -25,11 +26,12 @@ public class ftc_2025_functions extends LinearOpMode {
     public int gate_down_position  = 490;
 
     // Shooting
-    public double near_shot_hood_servo_pos = 0.73;
-    public double near_shot_hood_servo_pos_for_auto = near_shot_hood_servo_pos + 0.025;
-    public double far_shot_hood_servo_pos = 0.7;
-    public double near_shot_shooter_rpm = 3050;
-    public double far_shot_shooter_rpm = 4050;
+    public double near_shot_hood_servo_pos = 0.77;
+    public double near_shot_hood_servo_pos_for_auto = near_shot_hood_servo_pos + 0.1;
+    public double far_shot_hood_servo_pos = 0.71;
+    public double near_shot_shooter_rpm = 2865; // 3050;
+    public double near_shot_shooter_rpm_for_auto = near_shot_shooter_rpm;
+    public double far_shot_shooter_rpm = 3750; // 4050;
     public double shoot_trigger_intake_pwr = 1;
 
     // Movement
@@ -62,7 +64,7 @@ public class ftc_2025_functions extends LinearOpMode {
     public void set_motor_orientations_PIDF_and_zero_power_behavior(
             DcMotor FrontLeft, DcMotor FrontRight, DcMotor BackLeft, DcMotor BackRight,
             DcMotorEx ShootLeft, DcMotorEx ShootRight, DcMotor Intake, DcMotor Gate,
-            Servo HoodLeft, Servo HoodRight
+            Servo HoodLeft, Servo HoodRight //, HardwareMap hardwareMap
     ) {
         // Orient motors
         FrontLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -92,6 +94,15 @@ public class ftc_2025_functions extends LinearOpMode {
         ShootLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         ShootLeft.setVelocityPIDFCoefficients(pidf_p, 0, 0, pidf_f);
         ShootRight.setVelocityPIDFCoefficients(pidf_p, 0, 0, pidf_f);
+
+        // By default, the expansion hubs communicate over the slow I2C bus for every
+        // getCurrentPosition() call. Turn on "Fast Mode" for how Control Hub talks to motors
+        // and sensors.
+        // BUT THIS DOESN'T WORK BECAUSE IT CAUSES LIMELIGHT TO MALFUNCTION
+//        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+//        for (LynxModule hub : allHubs) {
+//            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+//        }
     }
 
     // gate function
@@ -366,9 +377,9 @@ public class ftc_2025_functions extends LinearOpMode {
 
         if (near_shot == 0) { // far shooting
             if (is_blue) {
-                target_x = -1.5;
+                target_x = -2;
             } else {
-                target_x = 1.5;
+                target_x = 2;
             }
             x_tol = 2; // This value has to be above 3 because post aim inertia drift is ~1-2 degrees
             x_power = 0.2;

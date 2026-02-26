@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,12 +25,14 @@ import java.util.List;
 @TeleOp
 public class tele_blue extends LinearOpMode {
     ftc_2025_functions ftc_fns = new ftc_2025_functions();
+    private ElapsedTime zeroGateTimer = new ElapsedTime();
 
     // Private variables
     double intake_trigger = 0;
     double spitout_trigger = 0;
     boolean intake_toggle = false;
     boolean shoot_toggle = false;
+    boolean gate_zeroed = false;
     private PathChain parkingPath;
 
     // Pedro pathing
@@ -54,7 +58,7 @@ public class tele_blue extends LinearOpMode {
 
         VoltageSensor ControlHub_VoltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
-        lime = new Limelight( hardwareMap, 8) ;
+        lime = new Limelight(hardwareMap, 8) ;
 
         List<DcMotor> allMotors = Arrays.asList(
                 FrontLeft, FrontRight, BackLeft, BackRight
@@ -86,26 +90,31 @@ public class tele_blue extends LinearOpMode {
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(48.98, 182.18))))
                 .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(-90), 0.8))
                 .build();
-
         follower.update();
 
         waitForStart();
 
-        // Initial gate zeroing (in case auton stopped at a point where gate is down)
         Gate.setPower(ftc_fns.init_gate_lift_pwr * power_adj); // Initial gate lift with low power
-        sleep(1500);
-        ftc_fns.zero_gate(Gate);
-        ftc_fns.close_gate(Gate);
+        zeroGateTimer.reset();
 
         follower.startTeleOpDrive();
 
         while (opModeIsActive()) {
             follower.update();
 
+            // Initial gate zeroing (in case auton stopped at a point where gate is down)
+            if (!gate_zeroed) {
+                if (zeroGateTimer.milliseconds() >= 1500) {
+                    ftc_fns.zero_gate(Gate);
+                    ftc_fns.close_gate(Gate);
+                    gate_zeroed = true;
+                }
+            }
+
             if (!automatedDrive) {
                 follower.setTeleOpDrive(
                         -gamepad1.left_stick_y,
-                        -gamepad1.left_stick_x * 1.2,
+                        -gamepad1.left_stick_x * 1.1, // Strafe correction
                         -gamepad1.right_stick_x,
                         false
                 );
@@ -173,14 +182,14 @@ public class tele_blue extends LinearOpMode {
             // y to set shooter to near shot speed (to be used when manually shooting)
             if (gamepad1.yWasPressed()) {
                 ftc_fns.far_shot_hood_servo_pos += 0.01;
-                telemetry.addData("Near Shot hood angle", ftc_fns.far_shot_hood_servo_pos);
+                telemetry.addData("far Shot hood angle", ftc_fns.far_shot_hood_servo_pos);
                 telemetry.update();
             }
 
             // b to set shooter to far sh ot speed (to be used when manually shooting)
             if (gamepad1.bWasPressed()) {
                 ftc_fns.far_shot_hood_servo_pos -= 0.01;
-                telemetry.addData("Near Shot hood angle", ftc_fns.far_shot_hood_servo_pos);
+                telemetry.addData("far Shot hood angle", ftc_fns.far_shot_hood_servo_pos);
                 telemetry.update();
             }
 
@@ -227,13 +236,19 @@ public class tele_blue extends LinearOpMode {
                             if (dist < 1.25 & dist > 0.9) {
                                 HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos+0.1);
                                 HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos+0.1);
-                            }
-                            if (dist <= 0.9) {
-                                HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos+0.2);
-                                HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos+0.2);
+                                telemetry.addData("Distance", dist);
+                                telemetry.addData("Hood Angle added 0.1", ftc_fns.near_shot_hood_servo_pos+0.1);
+                            } else if (dist <= 0.9) {
+                                HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos+0.15);
+                                HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos+0.15);
+                                telemetry.addData("Distance", dist);
+                                telemetry.addData("Hood Angle added 0.15", ftc_fns.near_shot_hood_servo_pos+0.15);
+                            } else {
+                                telemetry.addData("Distance", dist);
+                                telemetry.addData("Original Hood Angle", ftc_fns.near_shot_hood_servo_pos);
                             }
                             ftc_fns.set_shooter_speed(
-                                    ftc_fns.near_shot_shooter_rpm * 0.793 * dist / (Math.sqrt(dist - 0.25)),
+                                    ftc_fns.near_shot_shooter_rpm * 0.844 * dist / (Math.sqrt(dist - 0.25)),
                                     true, ShootLeft, ShootRight, telemetry, gamepad1);
                             ftc_fns.make_near_shot(power_adj, true, true, Intake, Gate);
                             // Slow down shooter but not to 0

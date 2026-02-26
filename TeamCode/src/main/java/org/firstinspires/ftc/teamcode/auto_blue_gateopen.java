@@ -21,6 +21,7 @@ public class auto_blue_gateopen extends OpMode {
     private boolean wasActionTimerReset = false;
     private int pathState;
     ftc_2025_functions ftc_fns = new ftc_2025_functions();
+    public Limelight lime;
 
     DcMotorEx ShootLeft;
     DcMotorEx ShootRight;
@@ -194,7 +195,7 @@ public class auto_blue_gateopen extends OpMode {
                     if (!wasActionTimerReset) {
                         actionTimer.resetTimer();
                         wasActionTimerReset = true;
-                        Intake.setPower(ftc_fns.shoot_trigger_intake_pwr * power_adj);
+                        Intake.setPower(ftc_fns.shoot_trigger_intake_pwr);
                     }
                     if (actionTimer.getElapsedTimeSeconds() > 1) {
                         Intake.setPower(0);
@@ -255,6 +256,8 @@ public class auto_blue_gateopen extends OpMode {
         ShootLeft = hardwareMap.get(DcMotorEx.class, "ShootLeft");
         ShootRight = hardwareMap.get(DcMotorEx.class, "ShootRight");
 
+        lime = new Limelight(hardwareMap, 8) ;
+
         VoltageSensor ControlHub_VoltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
         ftc_fns.set_motor_orientations_PIDF_and_zero_power_behavior(
@@ -279,7 +282,7 @@ public class auto_blue_gateopen extends OpMode {
     public void start() {
         // Run shooter wheel during entire auto session
         ftc_fns.set_shooter_speed(
-                ftc_fns.near_shot_shooter_rpm, false, ShootLeft,
+                ftc_fns.near_shot_shooter_rpm_for_auto, false, ShootLeft,
                 ShootRight, telemetry, gamepad1);
         HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos_for_auto);
         HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos_for_auto);
@@ -299,6 +302,9 @@ public class auto_blue_gateopen extends OpMode {
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
         telemetry.addData("Heading", follower.getPose().getHeading());
+        telemetry.addData("Auto hood", ftc_fns.near_shot_hood_servo_pos_for_auto);
+        telemetry.addData("Distance", ftc_fns.get_dist_safe(lime, true));
+
         telemetry.update();
     }
 }
