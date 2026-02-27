@@ -114,7 +114,7 @@ public class tele_blue extends LinearOpMode {
             if (!automatedDrive) {
                 follower.setTeleOpDrive(
                         -gamepad1.left_stick_y,
-                        -gamepad1.left_stick_x * 1.1, // Strafe correction
+                        -gamepad1.left_stick_x * 1.2, // Strafe correction
                         -gamepad1.right_stick_x,
                         false
                 );
@@ -181,14 +181,18 @@ public class tele_blue extends LinearOpMode {
 
             // y to set shooter to near shot speed (to be used when manually shooting)
             if (gamepad1.yWasPressed()) {
+                ftc_fns.near_shot_hood_servo_pos += 0.01;
                 ftc_fns.far_shot_hood_servo_pos += 0.01;
+                telemetry.addData("near Shot hood angle", ftc_fns.near_shot_hood_servo_pos);
                 telemetry.addData("far Shot hood angle", ftc_fns.far_shot_hood_servo_pos);
                 telemetry.update();
             }
 
             // b to set shooter to far sh ot speed (to be used when manually shooting)
             if (gamepad1.bWasPressed()) {
+                ftc_fns.near_shot_hood_servo_pos -= 0.01;
                 ftc_fns.far_shot_hood_servo_pos -= 0.01;
+                telemetry.addData("near Shot hood angle", ftc_fns.near_shot_hood_servo_pos);
                 telemetry.addData("far Shot hood angle", ftc_fns.far_shot_hood_servo_pos);
                 telemetry.update();
             }
@@ -202,9 +206,16 @@ public class tele_blue extends LinearOpMode {
 
             // Gate DOWN
             if (gamepad1.dpadDownWasPressed()) {
-                ftc_fns.close_gate(Gate);
+                ftc_fns.near_shot_shooter_rpm -= 50;
+                telemetry.addData("near shot shooter rpm", ftc_fns.near_shot_shooter_rpm);
+                telemetry.update();
+                // ftc_fns.close_gate(Gate);
             } else if (gamepad1.dpadUpWasPressed()) {
-                ftc_fns.lift_gate(true, Gate, Intake);
+                ftc_fns.near_shot_shooter_rpm += 50;
+                telemetry.addData("near shot shooter rpm", ftc_fns.near_shot_shooter_rpm);
+                telemetry.update();
+
+                // ftc_fns.lift_gate(true, Gate, Intake);
             }
 
             // Shooting
@@ -233,29 +244,31 @@ public class tele_blue extends LinearOpMode {
                         if (aimed) {
                             double dist = ftc_fns.get_dist_safe(lime, true);
                             telemetry.addData("Near shot aim succeeded - distance", dist);
-                            if (dist < 1.25 & dist > 0.9) {
-                                HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos+0.1);
-                                HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos+0.1);
-                                telemetry.addData("Distance", dist);
-                                telemetry.addData("Hood Angle added 0.1", ftc_fns.near_shot_hood_servo_pos+0.1);
-                            } else if (dist <= 0.9) {
-                                HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos+0.15);
-                                HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos+0.15);
-                                telemetry.addData("Distance", dist);
-                                telemetry.addData("Hood Angle added 0.15", ftc_fns.near_shot_hood_servo_pos+0.15);
-                            } else {
-                                telemetry.addData("Distance", dist);
-                                telemetry.addData("Original Hood Angle", ftc_fns.near_shot_hood_servo_pos);
-                            }
+//                            if (dist < 1.25 & dist > 0.9) {
+//                                HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos+0.05);
+//                                HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos+0.05);
+//                                telemetry.addData("Distance", dist);
+//                                telemetry.addData("Hood Angle added 0.1", ftc_fns.near_shot_hood_servo_pos+0.05);
+//                            } else if (dist <= 0.9) {
+//                                HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos+0.1);
+//                                HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos+0.1);
+//                                telemetry.addData("Distance", dist);
+//                                telemetry.addData("Hood Angle added 0.2", ftc_fns.near_shot_hood_servo_pos+0.1);
+//                            } else {
+//                                telemetry.addData("Distance", dist);
+//                                telemetry.addData("Original Hood Angle", ftc_fns.near_shot_hood_servo_pos);
+//                            }
                             ftc_fns.set_shooter_speed(
-                                    ftc_fns.near_shot_shooter_rpm * 0.844 * dist / (Math.sqrt(dist - 0.25)),
+                                    ftc_fns.near_shot_shooter_rpm * 0.636 * dist / (Math.sqrt(dist - 0.6)),
                                     true, ShootLeft, ShootRight, telemetry, gamepad1);
+                            telemetry.addData("Shooter Speed (rpm)", ftc_fns.near_shot_shooter_rpm * Math.sqrt(dist));
+                            telemetry.update();
                             ftc_fns.make_near_shot(power_adj, true, true, Intake, Gate);
                             // Slow down shooter but not to 0
                             ShootLeft.setVelocityPIDFCoefficients(ftc_fns.pidf_p/4, 0, 0, ftc_fns.pidf_f/4);
                             ShootRight.setVelocityPIDFCoefficients(ftc_fns.pidf_p/4, 0,  0, ftc_fns.pidf_f/4);
-                            ShootLeft.setPower(0.5);
-                            ShootRight.setPower(0.5);
+                            ShootLeft.setPower(0.4);
+                            ShootRight.setPower(0.4);
                             ShootLeft.setVelocityPIDFCoefficients(ftc_fns.pidf_p, 0, 0, ftc_fns.pidf_f);
                             ShootRight.setVelocityPIDFCoefficients(ftc_fns.pidf_p, 0, 0, ftc_fns.pidf_f);
                             HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos);
@@ -276,14 +289,14 @@ public class tele_blue extends LinearOpMode {
                             telemetry.addData("Far shot aim succeeded - distance", dist);
                             ftc_fns.set_shooter_speed(
 //                                    ftc_fns.far_shot_shooter_rpm * Math.sqrt(dist/2.9),
-                                    ftc_fns.far_shot_shooter_rpm * 0.485 * dist / Math.sqrt(dist - 1),
+                                    ftc_fns.far_shot_shooter_rpm * 0.65 * dist / Math.sqrt(dist - 1),
                                     true, ShootLeft, ShootRight, telemetry, gamepad1);
                             ftc_fns.make_far_shot(power_adj, true, true, Intake, Gate);
                             // Slow down shooter but not to 0
                             ShootLeft.setVelocityPIDFCoefficients(ftc_fns.pidf_p/4, 0, 0, ftc_fns.pidf_f/4);
                             ShootRight.setVelocityPIDFCoefficients(ftc_fns.pidf_p/4, 0,  0, ftc_fns.pidf_f/4);
-                            ShootLeft.setPower(0.6);
-                            ShootRight.setPower(0.6);
+                            ShootLeft.setPower(0.4);
+                            ShootRight.setPower(0.4);
                             ShootLeft.setVelocityPIDFCoefficients(ftc_fns.pidf_p, 0, 0, ftc_fns.pidf_f);
                             ShootRight.setVelocityPIDFCoefficients(ftc_fns.pidf_p, 0, 0, ftc_fns.pidf_f);
 //                            ftc_fns.power_down_shooter(ShootLeft, ShootRight);

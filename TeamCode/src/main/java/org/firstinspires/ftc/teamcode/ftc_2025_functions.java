@@ -18,25 +18,25 @@ import java.util.List;
 
 public class ftc_2025_functions extends LinearOpMode {
     // --------------- Constants --------------
-    public double pidf_p = 175;
+    public double pidf_p = 150;
     public double pidf_f = 16.8;
 
     // Initialization
     public double init_gate_lift_pwr = -0.2;
-    public int gate_down_position  = 490;
+    public int gate_down_position  = 495;
 
     // Shooting
-    public double near_shot_hood_servo_pos = 0.77;
-    public double near_shot_hood_servo_pos_for_auto = near_shot_hood_servo_pos + 0.1;
-    public double far_shot_hood_servo_pos = 0.71;
-    public double near_shot_shooter_rpm = 2865; // 3050;
-    public double near_shot_shooter_rpm_for_auto = near_shot_shooter_rpm;
-    public double far_shot_shooter_rpm = 3750; // 4050;
+    public double near_shot_hood_servo_pos = 0.69;
+    public double near_shot_hood_servo_pos_for_auto = near_shot_hood_servo_pos;
+    public double far_shot_hood_servo_pos = 0.63;
+    public double near_shot_shooter_rpm = 2450;
+    public double near_shot_shooter_rpm_for_auto = near_shot_shooter_rpm+250;
+    public double far_shot_shooter_rpm = 2450;
     public double shoot_trigger_intake_pwr = 1;
 
     // Movement
     public double wheel_pwr = 1;
-    public double ball_pickup_intake_pwr = 0.7;
+    public double ball_pickup_intake_pwr = 0.75;
     public long auton_time_to_leave_near_shot_area = 650;
 
     // --------------- Functions --------------
@@ -609,7 +609,7 @@ public class ftc_2025_functions extends LinearOpMode {
             sleep(50); // TODO: Can we tune down to 50?
             shooter_left_act_vel = ShootLeft.getVelocity();
             shooter_right_act_vel = ShootRight.getVelocity();
-            telemetry.addData("Shooter want speed (rpm)", convert_tps_to_rpm(tps));
+            telemetry.addData("Shooter want speed (rpm)", rpm);
             telemetry.addData("Shooter left actual speed (rpm)", convert_tps_to_rpm(shooter_left_act_vel));
             telemetry.addData("Shooter right actual speed (rpm)", convert_tps_to_rpm(shooter_right_act_vel));
             telemetry.update();
@@ -618,7 +618,8 @@ public class ftc_2025_functions extends LinearOpMode {
             }
         }
     }
-    public void make_near_shot(double power_adj, boolean open_gate_before, boolean close_gate_after, DcMotor Intake, DcMotor Gate) {
+    public void make_near_shot(double power_adj, boolean open_gate_before, boolean close_gate_after,
+                               DcMotor Intake, DcMotor Gate) {
         if (open_gate_before) {
             lift_gate(true, Gate, Intake);
         }
@@ -689,4 +690,3 @@ public class ftc_2025_functions extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {    }
 }
-
