@@ -2,7 +2,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -30,8 +29,9 @@ public class ftc_2025_functions extends LinearOpMode {
     public double near_shot_hood_servo_pos_for_auto = near_shot_hood_servo_pos;
     public double far_shot_hood_servo_pos = 0.63;
     public double near_shot_shooter_rpm = 2450;
-    public double near_shot_shooter_rpm_for_auto = near_shot_shooter_rpm+250;
+    public double near_shot_shooter_rpm_for_auto = near_shot_shooter_rpm;
     public double far_shot_shooter_rpm = 2450;
+    public double far_shot_shooter_rpm_for_auto = far_shot_shooter_rpm + 870;
     public double shoot_trigger_intake_pwr = 1;
 
     // Movement
@@ -94,15 +94,6 @@ public class ftc_2025_functions extends LinearOpMode {
         ShootLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         ShootLeft.setVelocityPIDFCoefficients(pidf_p, 0, 0, pidf_f);
         ShootRight.setVelocityPIDFCoefficients(pidf_p, 0, 0, pidf_f);
-
-        // By default, the expansion hubs communicate over the slow I2C bus for every
-        // getCurrentPosition() call. Turn on "Fast Mode" for how Control Hub talks to motors
-        // and sensors.
-        // BUT THIS DOESN'T WORK BECAUSE IT CAUSES LIMELIGHT TO MALFUNCTION
-//        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
-//        for (LynxModule hub : allHubs) {
-//            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-//        }
     }
 
     // gate function
@@ -606,7 +597,7 @@ public class ftc_2025_functions extends LinearOpMode {
 //        while (Math.abs(shooter_left_act_vel / tps - 1) > 0.01
 //                && Math.abs(shooter_right_act_vel / tps - 1) > 0.01) {
         while (Math.abs((shooter_left_act_vel + shooter_right_act_vel) / (2 * tps) - 1) > 0.01) {
-            sleep(50); // TODO: Can we tune down to 50?
+            sleep(50);
             shooter_left_act_vel = ShootLeft.getVelocity();
             shooter_right_act_vel = ShootRight.getVelocity();
             telemetry.addData("Shooter want speed (rpm)", rpm);

@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -207,12 +206,16 @@ public class tele_blue extends LinearOpMode {
             // Gate DOWN
             if (gamepad1.dpadDownWasPressed()) {
                 ftc_fns.near_shot_shooter_rpm -= 50;
+                ftc_fns.far_shot_shooter_rpm -= 50;
                 telemetry.addData("near shot shooter rpm", ftc_fns.near_shot_shooter_rpm);
+                telemetry.addData("far shot shooter rpm", ftc_fns.far_shot_shooter_rpm);
                 telemetry.update();
                 // ftc_fns.close_gate(Gate);
             } else if (gamepad1.dpadUpWasPressed()) {
                 ftc_fns.near_shot_shooter_rpm += 50;
+                ftc_fns.far_shot_shooter_rpm += 50;
                 telemetry.addData("near shot shooter rpm", ftc_fns.near_shot_shooter_rpm);
+                telemetry.addData("far shot shooter rpm", ftc_fns.far_shot_shooter_rpm);
                 telemetry.update();
 
                 // ftc_fns.lift_gate(true, Gate, Intake);
@@ -259,7 +262,7 @@ public class tele_blue extends LinearOpMode {
 //                                telemetry.addData("Original Hood Angle", ftc_fns.near_shot_hood_servo_pos);
 //                            }
                             ftc_fns.set_shooter_speed(
-                                    ftc_fns.near_shot_shooter_rpm * 0.636 * dist / (Math.sqrt(dist - 0.6)),
+                                    ftc_fns.near_shot_shooter_rpm * 0.7 * dist / (Math.sqrt(dist - 0.5)),
                                     true, ShootLeft, ShootRight, telemetry, gamepad1);
                             telemetry.addData("Shooter Speed (rpm)", ftc_fns.near_shot_shooter_rpm * Math.sqrt(dist));
                             telemetry.update();
