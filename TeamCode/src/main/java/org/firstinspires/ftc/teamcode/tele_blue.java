@@ -93,6 +93,7 @@ public class tele_blue extends LinearOpMode {
 
         waitForStart();
 
+        // Initial gate zeroing (in case auton stopped at a point where gate is down)
         Gate.setPower(ftc_fns.init_gate_lift_pwr * power_adj); // Initial gate lift with low power
         zeroGateTimer.reset();
 
@@ -247,25 +248,9 @@ public class tele_blue extends LinearOpMode {
                         if (aimed) {
                             double dist = ftc_fns.get_dist_safe(lime, true);
                             telemetry.addData("Near shot aim succeeded - distance", dist);
-//                            if (dist < 1.25 & dist > 0.9) {
-//                                HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos+0.05);
-//                                HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos+0.05);
-//                                telemetry.addData("Distance", dist);
-//                                telemetry.addData("Hood Angle added 0.1", ftc_fns.near_shot_hood_servo_pos+0.05);
-//                            } else if (dist <= 0.9) {
-//                                HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos+0.1);
-//                                HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos+0.1);
-//                                telemetry.addData("Distance", dist);
-//                                telemetry.addData("Hood Angle added 0.2", ftc_fns.near_shot_hood_servo_pos+0.1);
-//                            } else {
-//                                telemetry.addData("Distance", dist);
-//                                telemetry.addData("Original Hood Angle", ftc_fns.near_shot_hood_servo_pos);
-//                            }
                             ftc_fns.set_shooter_speed(
                                     ftc_fns.near_shot_shooter_rpm * 0.7 * dist / (Math.sqrt(dist - 0.5)),
                                     true, ShootLeft, ShootRight, telemetry, gamepad1);
-                            telemetry.addData("Shooter Speed (rpm)", ftc_fns.near_shot_shooter_rpm * Math.sqrt(dist));
-                            telemetry.update();
                             ftc_fns.make_near_shot(power_adj, true, true, Intake, Gate);
                             // Slow down shooter but not to 0
                             ShootLeft.setVelocityPIDFCoefficients(ftc_fns.pidf_p/4, 0, 0, ftc_fns.pidf_f/4);

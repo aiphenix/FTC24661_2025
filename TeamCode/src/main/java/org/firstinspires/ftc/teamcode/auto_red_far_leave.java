@@ -51,7 +51,7 @@ public class auto_red_far_leave extends LinearOpMode {
 
         if (opModeIsActive()) {
             Gate.setPower(ftc_fns.init_gate_lift_pwr * power_adj); // Initial gate lift with low power
-            sleep(2000);
+            sleep(1500);
             ftc_fns.zero_gate(Gate);
 
             // leave shooting area

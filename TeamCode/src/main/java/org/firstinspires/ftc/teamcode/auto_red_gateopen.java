@@ -194,7 +194,7 @@ public class auto_red_gateopen extends OpMode {
                     if (!wasActionTimerReset) {
                         actionTimer.resetTimer();
                         wasActionTimerReset = true;
-                        Intake.setPower(ftc_fns.shoot_trigger_intake_pwr * power_adj);
+                        Intake.setPower(ftc_fns.shoot_trigger_intake_pwr);
                     }
                     if (actionTimer.getElapsedTimeSeconds() > 1) {
                         Intake.setPower(0);
@@ -279,7 +279,7 @@ public class auto_red_gateopen extends OpMode {
     public void start() {
         // Run shooter wheel during entire auto session
         ftc_fns.set_shooter_speed(
-                ftc_fns.near_shot_shooter_rpm, false, ShootLeft,
+                ftc_fns.near_shot_shooter_rpm_for_auto, false, ShootLeft,
                 ShootRight, telemetry, gamepad1);
         HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos_for_auto);
         HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos_for_auto);
@@ -299,6 +299,7 @@ public class auto_red_gateopen extends OpMode {
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
         telemetry.addData("Heading", follower.getPose().getHeading());
+        telemetry.addData("Auto hood", ftc_fns.near_shot_hood_servo_pos_for_auto);
         telemetry.update();
     }
 }
