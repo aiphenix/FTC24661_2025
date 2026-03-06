@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous
-public class auto_red_gateopen extends OpMode {
+public class auto_red_3sp extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer;
     private boolean wasActionTimerReset = false;
@@ -41,7 +41,7 @@ public class auto_red_gateopen extends OpMode {
     private final Pose intake1CP = new Pose(144 - 62.934, 72.673); // Control Point
     private final Pose intake1End = new Pose(144 - 19.5, 80.393, Math.toRadians(180 - 180)); // Highest (First Set) of Artifacts from the Spike Mark
     private final Pose openGateCP = new Pose(144 - 33.3, 78.26); // Control Point
-    private final Pose openGateEnd = new Pose(144 - 16.45, 75.1, Math.toRadians(180 - 180)); // Open gate after first spike
+    private final Pose openGateEnd = new Pose(144 - 16.45, 74.9, Math.toRadians(180 - 85)); // Open gate after first spike
     private final Pose intake2CP = new Pose(144 - 74.7, 43.5); // Control Point
     private final Pose intake2End = new Pose(144 - 15.5, 55, Math.toRadians(180 - 180)); // Middle (Second Set) of Artifacts from the Spike Mark
     private final Pose intake2RetCP = new Pose(144 - 40.5, 60.1, Math.toRadians(180 - 180)); // Middle (Second Set) of Artifacts from the Spike Mark
@@ -76,6 +76,11 @@ public class auto_red_gateopen extends OpMode {
                 .setLinearHeadingInterpolation(score.getHeading(), intake1End.getHeading(), 0.2)
                 .addParametricCallback(0.2, () -> Intake.setPower(ftc_fns.ball_pickup_intake_pwr * power_adj))
                 .build();
+        intake1ToScore = follower.pathBuilder()
+                .addPath(new BezierLine(intake1End,score))
+                .setLinearHeadingInterpolation(intake1End.getHeading(), score.getHeading(), 0.99)
+                .addParametricCallback(0.99, () -> Intake.setPower(0))
+                .build();
         intake1ToOpenGate = follower.pathBuilder()
                 .addPath(new BezierCurve(intake1End, openGateCP, openGateEnd))
                 .setLinearHeadingInterpolation(intake1End.getHeading(), openGateEnd.getHeading(), 0.8)
@@ -83,7 +88,6 @@ public class auto_red_gateopen extends OpMode {
         openGateToScore = follower.pathBuilder()
                 .addPath(new BezierLine(openGateEnd, score))
                 .setLinearHeadingInterpolation(openGateEnd.getHeading(), score.getHeading(), 0.99)
-                .addParametricCallback(0, () -> Intake.setPower(ftc_fns.ball_pickup_intake_pwr * power_adj / 1.5))
                 .addParametricCallback(0.99, () -> Intake.setPower(0))
                 .build();
 
@@ -96,7 +100,6 @@ public class auto_red_gateopen extends OpMode {
         intake2ToScore = follower.pathBuilder()
                 .addPath(new BezierCurve(intake2End, intake2RetCP, score))
                 .setLinearHeadingInterpolation(intake2End.getHeading(), score.getHeading(), 0.99)
-                .addParametricCallback(0, () -> Intake.setPower(ftc_fns.ball_pickup_intake_pwr * power_adj / 1.5))
                 .addParametricCallback(0.99, () -> Intake.setPower(0))
                 .build();
 
@@ -109,7 +112,6 @@ public class auto_red_gateopen extends OpMode {
         intake3ToScore = follower.pathBuilder()
                 .addPath(new BezierLine(intake3End, score))
                 .setLinearHeadingInterpolation(intake3End.getHeading(), score.getHeading(), 0.99)
-                .addParametricCallback(0, () -> Intake.setPower(ftc_fns.ball_pickup_intake_pwr * power_adj / 1.5))
                 .addParametricCallback(0.99, () -> Intake.setPower(0))
                 .build();
 
@@ -131,11 +133,11 @@ public class auto_red_gateopen extends OpMode {
                 shootThenFollowPath(1, scoreToIntake1, 1, 2);
                 break;
             case 2:
-                waitThenFollowPath(0.1, intake1ToOpenGate, 1, 3);
+                waitThenFollowPath(0.1, intake1ToScore, 1, 4);
                 break;
-            case 3:
-                waitThenFollowPath(0.8, openGateToScore, 1, 4);
-                break;
+//            case 3:
+//                waitThenFollowPath(0.8, openGateToScore, 1, 4);
+//                break;
             case 4:
                 shootThenFollowPath(0, scoreToIntake2, 1, 5);
                 break;

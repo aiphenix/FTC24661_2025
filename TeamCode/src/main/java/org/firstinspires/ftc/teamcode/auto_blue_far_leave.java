@@ -36,13 +36,6 @@ public class auto_blue_far_leave extends LinearOpMode {
                 ShootLeft, ShootRight, Intake, Gate, HoodLeft, HoodRight
         );
 
-        // Set up limelight
-        // Motors and Accessories
-        Limelight3A limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(8);
-        limelight.start();
-        telemetry.setMsTransmissionInterval(10);
-
         // adjust power based on voltage
         double curr_vol = ControlHub_VoltageSensor.getVoltage();
         double power_adj = ftc_fns.adjust_power(curr_vol, telemetry);

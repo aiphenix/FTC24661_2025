@@ -137,15 +137,15 @@ public class tele_red extends LinearOpMode {
                 Intake.setPower(0);
             }
 
-            // right trigger to manually shoot
+            // right trigger to manually shoot when aiming doesn't work
             if (intake_trigger > 0) {
                 if (Gate.getCurrentPosition() > 50) {
-                    gamepad1.rumbleBlips(600);
-                } else {
-                    Intake.setPower(ftc_fns.shoot_trigger_intake_pwr/2);
-                    sleep(100);
-                    Intake.setPower(0);
+                    ftc_fns.lift_gate(true, Gate, Intake);
                 }
+                Intake.setPower(ftc_fns.shoot_trigger_intake_pwr);
+                sleep(100);
+                Intake.setPower(0);
+                ftc_fns.close_gate(Gate);
             }
 
             // Left toggle to spin up/down shooter
@@ -175,7 +175,7 @@ public class tele_red extends LinearOpMode {
                         Intake.setPower(ftc_fns.ball_pickup_intake_pwr * power_adj);
                     }
                 } else {
-                    Intake.setPower(0);
+                    Intake.setPower(0.1);
                 }
             }
 
@@ -197,11 +197,15 @@ public class tele_red extends LinearOpMode {
                 telemetry.update();
             }
 
-            // Auto Aim Only
+            // Manually zero gate
             if (gamepad1.xWasPressed()) {
-                ftc_fns.auto_aim(
-                        false, true, FrontLeft, FrontRight, BackLeft, BackRight,
-                        lime, telemetry, gamepad1);
+                Gate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                Gate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                Gate.setDirection(DcMotor.Direction.FORWARD);
+                Gate.setPower(ftc_fns.init_gate_lift_pwr * power_adj);
+                sleep(1500);
+                ftc_fns.zero_gate(Gate);
+                ftc_fns.close_gate(Gate);
             }
 
             // Gate DOWN
