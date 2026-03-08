@@ -38,10 +38,10 @@ public class auto_blue_far_2sp_nohp extends OpMode { // no human player
     // PedroPath points
     private final Pose start = new Pose(57.33, 8.937, Math.toRadians(90)); // Start pose of our robot
     private final Pose score = new Pose(59.156, 20.957, Math.toRadians(115)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle
-    private final Pose intake1CP = new Pose(61.721, 35.292); // Control Point
-    private final Pose intake1End = new Pose(13.41, 40, Math.toRadians(182)); // Highest (First Set) of Artifacts from the Spike Mark
-    private final Pose intake2CP = new Pose(61.113, 73.57); // Control Point
-    private final Pose intake2End = new Pose(14.59, 58, Math.toRadians(182)); // Lowest (Third Set) of Artifacts from the Spike Mark
+    private final Pose intake1CP = new Pose(61.721, 39.292); // Control Point
+    private final Pose intake1End = new Pose(13.41, 44, Math.toRadians(182)); // Highest (First Set) of Artifacts from the Spike Mark
+    private final Pose intake2CP = new Pose(61.113, 77.57); // Control Point
+    private final Pose intake2End = new Pose(14.59, 62, Math.toRadians(182)); // Lowest (Third Set) of Artifacts from the Spike Mark
     private final Pose park = new Pose(30.153, 82.491, Math.toRadians(180)); // Park in front of gate at end of auto
     private PathChain startToScore, scoreToIntake1, intake1ToScore, scoreToIntake2,
             intake2ToScore, scoreToPark;

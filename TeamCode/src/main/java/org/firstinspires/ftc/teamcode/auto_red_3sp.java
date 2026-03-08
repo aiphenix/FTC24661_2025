@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous
-public class auto_red_3sp extends OpMode {
+ public class auto_red_3sp extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer;
     private boolean wasActionTimerReset = false;
@@ -41,12 +41,12 @@ public class auto_red_3sp extends OpMode {
     private final Pose intake1CP = new Pose(144 - 62.934, 72.673); // Control Point
     private final Pose intake1End = new Pose(144 - 19.5, 80.393, Math.toRadians(180 - 180)); // Highest (First Set) of Artifacts from the Spike Mark
     private final Pose openGateCP = new Pose(144 - 33.3, 78.26); // Control Point
-    private final Pose openGateEnd = new Pose(144 - 16.45, 74.9, Math.toRadians(180 - 85)); // Open gate after first spike
-    private final Pose intake2CP = new Pose(144 - 74.7, 43.5); // Control Point
-    private final Pose intake2End = new Pose(144 - 15.5, 55, Math.toRadians(180 - 180)); // Middle (Second Set) of Artifacts from the Spike Mark
-    private final Pose intake2RetCP = new Pose(144 - 40.5, 60.1, Math.toRadians(180 - 180)); // Middle (Second Set) of Artifacts from the Spike Mark
-    private final Pose intake3CP = new Pose(144 - 77, 16.2); // Control Point
-    private final Pose intake3End = new Pose(144 - 15.5, 31.5, Math.toRadians(180 - 180)); // Lowest (Third Set) of Artifacts from the Spike Mark
+    private final Pose openGateEnd = new Pose(144 - 16.45, 74.9, Math.toRadians(180 - 180)); // Open gate after first spike
+    private final Pose intake2CP = new Pose(144 - 74.7, 40.5); // Control Point
+    private final Pose intake2End = new Pose(144 - 11, 55, Math.toRadians(180 - 180)); // Middle (Second Set) of Artifacts from the Spike Mark
+    private final Pose intake2RetCP = new Pose(144 - 40.5, 61.1, Math.toRadians(180 - 180)); // Middle (Second Set) of Artifacts from the Spike Mark
+    private final Pose intake3CP = new Pose(144 - 77, 15.7); // Control Point
+    private final Pose intake3End = new Pose(144 - 11, 29.5, Math.toRadians(180 - 180)); // Lowest (Third Set) of Artifacts from the Spike Mark
     private final Pose park = new Pose(144 - 30.153, 82.491, Math.toRadians(180 - 180)); // Park in front of gate at end of auto
     private PathChain startToScore, scoreToIntake1, intake1ToOpenGate, intake1ToScore, openGateToScore,  scoreToIntake2,
             intake2ToScore, scoreToIntake3, intake3ToScore, scoreToPark;

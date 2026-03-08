@@ -41,12 +41,12 @@ public class auto_blue_3sp extends OpMode {
     private final Pose intake1CP = new Pose(62.934, 72.673); // Control Point
     private final Pose intake1End = new Pose(19.5, 80.393, Math.toRadians(180)); // Highest (First Set) of Artifacts from the Spike Mark
     private final Pose openGateCP = new Pose(33.3, 78.26); // Control Point
-    private final Pose openGateEnd = new Pose(16.45, 74.9, Math.toRadians(85)); // Open gate after first spike
-    private final Pose intake2CP = new Pose(74.7, 43.5); // Control Point
-    private final Pose intake2End = new Pose(15.5, 55, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark
-    private final Pose intake2RetCP = new Pose(40.5, 60.1, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark
-    private final Pose intake3CP = new Pose(77, 16.2); // Control Point
-    private final Pose intake3End = new Pose(15.5, 31.5, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark
+    private final Pose openGateEnd = new Pose(16.45, 74.9, Math.toRadians(180)); // Open gate after first spike
+    private final Pose intake2CP = new Pose(74.7, 40.5); // Control Point
+    private final Pose intake2End = new Pose(11, 55, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark
+    private final Pose intake2RetCP = new Pose(40.5, 61.1, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark
+    private final Pose intake3CP = new Pose(77, 15.7); // Control Point
+    private final Pose intake3End = new Pose(11, 29.5, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark
     private final Pose park = new Pose(30.153, 82.491, Math.toRadians(180)); // Park in front of gate at end of auto
     private PathChain startToScore, scoreToIntake1, intake1ToOpenGate, intake1ToScore, openGateToScore,  scoreToIntake2,
             intake2ToScore, scoreToIntake3, intake3ToScore, scoreToPark;

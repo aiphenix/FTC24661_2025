@@ -27,7 +27,7 @@ public class tele_red extends LinearOpMode {
     private ElapsedTime zeroGateTimer = new ElapsedTime();
 
     // Private variables
-    double intake_trigger = 0;
+    double shoot_trigger = 0;
     double spitout_trigger = 0;
     boolean intake_toggle = false;
     boolean shoot_toggle = false;
@@ -128,7 +128,7 @@ public class tele_red extends LinearOpMode {
 
             // Intake motion
             spitout_trigger = gamepad1.left_trigger;
-            intake_trigger = gamepad1.right_trigger;
+            shoot_trigger = gamepad1.right_trigger;
 
             // Left trigger to backspin intake
             if (spitout_trigger > 0) {
@@ -138,13 +138,14 @@ public class tele_red extends LinearOpMode {
             }
 
             // right trigger to manually shoot when aiming doesn't work
-            if (intake_trigger > 0) {
+            if (shoot_trigger > 0) {
                 if (Gate.getCurrentPosition() > 50) {
                     ftc_fns.lift_gate(true, Gate, Intake);
                 }
                 Intake.setPower(ftc_fns.shoot_trigger_intake_pwr);
-                sleep(100);
+                sleep(600);
                 Intake.setPower(0);
+                sleep(50); // wait till intake stops spinning and balls all leave
                 ftc_fns.close_gate(Gate);
             }
 
@@ -175,7 +176,7 @@ public class tele_red extends LinearOpMode {
                         Intake.setPower(ftc_fns.ball_pickup_intake_pwr * power_adj);
                     }
                 } else {
-                    Intake.setPower(0.1);
+                    Intake.setPower(0.2);
                 }
             }
 
