@@ -169,9 +169,12 @@ public class tele_red extends LinearOpMode {
             // Right toggle to spin up/down intake
             if (gamepad1.rightBumperWasPressed()) {
                 intake_toggle = ! intake_toggle;
+                if (Intake.getPower() < 0.3) {
+                    intake_toggle = true;
+                }
                 if (intake_toggle) {
                     if (Gate.getCurrentPosition() < ftc_fns.gate_down_position - 100) {
-                        gamepad1.rumbleBlips(600);
+                        // pass
                     } else {
                         Intake.setPower(ftc_fns.ball_pickup_intake_pwr * power_adj);
                     }
@@ -267,8 +270,6 @@ public class tele_red extends LinearOpMode {
                             HoodLeft.setPosition(ftc_fns.near_shot_hood_servo_pos);
                             HoodRight.setPosition(ftc_fns.near_shot_hood_servo_pos);
 //                            ftc_fns.power_down_shooter(ShootLeft, ShootRight);
-                        } else {
-                            gamepad1.rumble(100);
                         }
                     } else if (near_shot == 0) { // far shot
                         HoodLeft.setPosition(ftc_fns.far_shot_hood_servo_pos);
